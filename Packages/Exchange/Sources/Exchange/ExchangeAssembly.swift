@@ -38,7 +38,12 @@ extension ExchangeAssembly: ExchangeAssemblyInterface {
     func makeExchange() -> ExchangeViewController<ExchangeViewModel> {
         let viewModel = ExchangeViewModel()
         let suiView = ExchangeView(viewModel: viewModel)
-        let viewController = ExchangeViewController(viewModel: viewModel, suiView: suiView)
+        let hostingController = BaseHostingController(rootView: suiView, ignoresKeyboard: true)
+        let viewController = ExchangeViewController(
+            viewModel: viewModel,
+            suiView: suiView,
+            hostingController: hostingController
+        )
 
         return viewController
     }

@@ -1,5 +1,6 @@
 import UIKit
 import DesignSystem
+import Extensions
 
 // MARK: - TabBarItem
 
@@ -13,10 +14,10 @@ enum TabBarItem: Int, CaseIterable, TabBarItemDescriptor {
     var displayTitle: String {
         switch self {
         case .exchange:
-            "Exchange"
+            "TabBar.tab.exchange.title".localized()
 
         case .history:
-            "History"
+            "TabBar.tab.history.title".localized()
         }
     }
 

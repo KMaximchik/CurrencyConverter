@@ -10,13 +10,19 @@ final class ExchangeViewController<ViewModel: ExchangeViewModelInterface>: BaseV
 
     private let viewModel: ViewModel
     private let suiView: ExchangeView<ViewModel>
-    private var hostingController: BaseHostingController<ExchangeView<ViewModel>>?
+    private var hostingController: BaseHostingController<ExchangeView<ViewModel>>
 
     // MARK: - Init
 
-    init(viewModel: ViewModel, suiView: ExchangeView<ViewModel>) {
-        self.suiView = suiView
+    init(
+        viewModel: ViewModel,
+        suiView: ExchangeView<ViewModel>,
+        hostingController: BaseHostingController<ExchangeView<ViewModel>>
+    ) {
         self.viewModel = viewModel
+        self.suiView = suiView
+        self.hostingController = hostingController
+
         super.init()
     }
 
@@ -31,22 +37,11 @@ final class ExchangeViewController<ViewModel: ExchangeViewModelInterface>: BaseV
     // MARK: - Privtae Methods
 
     private func setup() {
-        hostingController = embedAndReturn(suiView: suiView)
-    }
-
-    private func embedAndReturn<V: View>(suiView: V) -> BaseHostingController<V> {
-        let hostingController = BaseHostingController(
-            rootView: suiView,
-            ignoresKeyboard: true
-        )
-
         hostingController.view.backgroundColor = CCColor.backgroundPrimary.uiColor
         hostingController.willMove(toParent: self)
         addChild(hostingController)
         view.willMove(toSuperview: hostingController.view)
         hostingController.view.embed(in: view)
         hostingController.didMove(toParent: self)
-
-        return hostingController
     }
 }

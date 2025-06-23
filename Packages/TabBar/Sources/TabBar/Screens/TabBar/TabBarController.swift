@@ -30,7 +30,9 @@ final class TabBarController: UITabBarController, UITabBarControllerDelegate {
     // MARK: - Internal Methods
 
     func switchTab(to tab: TabBarItemDescriptor) {
-        guard let index = customTabs.firstIndex(where: { tab.id == $0.itemDescriptor.id }) else { return }
+        guard
+            let index = customTabs.firstIndex(where: { tab.id == $0.itemDescriptor.id })
+        else { return }
 
         self.selectedIndex = index
     }
@@ -38,6 +40,8 @@ final class TabBarController: UITabBarController, UITabBarControllerDelegate {
     // MARK: - Private Methods
 
     private func setupUI() {
+        view.backgroundColor = CCColor.backgroundPrimary.uiColor
+
         tabBar.backgroundColor = CCColor.backgroundSecondary.uiColor
         tabBar.tintColor = CCColor.accentBlue.uiColor
         tabBar.unselectedItemTintColor = CCColor.labelSecondary.uiColor

@@ -38,7 +38,12 @@ extension HistoryAssembly: HistoryAssemblyInterface {
     func makeHistory() -> HistoryViewController<HistoryViewModel> {
         let viewModel = HistoryViewModel()
         let suiView = HistoryView(viewModel: viewModel)
-        let viewController = HistoryViewController(viewModel: viewModel, suiView: suiView)
+        let hostingController = BaseHostingController(rootView: suiView, ignoresKeyboard: true)
+        let viewController = HistoryViewController(
+            viewModel: viewModel,
+            suiView: suiView,
+            hostingController: hostingController
+        )
 
         return viewController
     }

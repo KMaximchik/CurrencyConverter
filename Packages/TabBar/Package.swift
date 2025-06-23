@@ -18,7 +18,8 @@ let package = Package(
         .package(path: "../History"),
         .package(path: "../DesignSystem"),
         .package(path: "../Core"),
-        .package(path: "../UseCases")
+        .package(path: "../UseCases"),
+        .package(path: "../Extensions")
     ],
     targets: [
         .target(
@@ -28,7 +29,8 @@ let package = Package(
                 .byName(name: "History"),
                 .byName(name: "DesignSystem"),
                 .byName(name: "Core"),
-                .byName(name: "UseCases")
+                .byName(name: "UseCases"),
+                .byName(name: "Extensions")
             ],
             path: "Sources"
         ),
