@@ -45,11 +45,14 @@ targets:
       - package: TabBar
       - package: Exchange
       - package: History
-      - package: Models
+      - package: Domain
       - package: DBServices
       - package: APIServices
       - package: UseCases
       - package: Network
+      - package: Database
+      - package: DTOs
+      - package: Entities
     postCompileScripts:
       - path: Scripts/swiftlint.sh
         name: Swiftlint
@@ -65,8 +68,8 @@ packages:
     path: Packages/Exchange
   History:
     path: Packages/History
-  Models:
-    path: Packages/Models
+  Domain:
+    path: Packages/Domain
   DBServices:
     path: Packages/DBServices
   APIServices:
@@ -75,5 +78,11 @@ packages:
     path: Packages/UseCases
   Network:
     path: Packages/Network
+  Database:
+    path: Packages/Database
   DesignSystem:
     path: Packages/DesignSystem
+  DTOs:
+    path: Packages/DTOs
+  Entities:
+    path: Packages/Entities

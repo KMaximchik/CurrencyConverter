@@ -14,14 +14,16 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../Network"),
+        .package(path: "../Database"),
+        .package(path: "../Entities"),
         .package(path: "../Core")
     ],
     targets: [
         .target(
             name: "DBServices",
             dependencies: [
-                .byName(name: "Network"),
+                .byName(name: "Database"),
+                .byName(name: "Entities"),
                 .byName(name: "Core")
             ],
             path: "Sources"

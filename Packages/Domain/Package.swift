@@ -3,19 +3,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "Models",
+    name: "Domain",
     platforms: [
         .iOS(.v17)
     ],
     products: [
         .library(
-            name: "Models",
-            targets: ["Models"]
+            name: "Domain",
+            targets: ["Domain"]
         ),
     ],
     targets: [
         .target(
-            name: "Models"
+            name: "Domain"
         ),
     ]
 )
