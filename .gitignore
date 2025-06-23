@@ -1,0 +1,7 @@
+**/.DS_Store
+**/*.xcodeproj
+**/.swiftpm
+**/.openapi-generator
+**/.openapi-generator-ignore
+**/Package.resolved
+**/.build

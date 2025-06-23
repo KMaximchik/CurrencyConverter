@@ -1,0 +1,79 @@
+name: CurrencyConverter
+configs:
+  App Debug: debug
+  App Release: release
+targets:
+  CurrencyConverter:
+    platform: iOS
+    type: application
+    sources:
+      - Sources
+      - Resources
+    scheme:
+      configVariants:
+        - App
+    deploymentTarget:
+      iOS: 17.0
+    configFiles:
+      App Debug: Configs/Config.xcconfig
+      App Release: Configs/Config.xcconfig
+    info:
+      path: Configs/Info.plist
+      properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UILaunchStoryboardName: LaunchScreen
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.kirillmaximchik.currencyconverter
+      DEAD_CODE_STRIPPING: true
+      PRODUCT_NAME: CurrencyConverter
+      DISPLAY_NAME: "Currency Converter"
+      VERSION_NUMBER: "1.0.0"
+      MARKETING_VERSION: '1.0.0'
+      CURRENT_PROJECT_VERSION: 0
+      VERSIONING_SYSTEM: apple-generic
+      CODE_SIGN_STYLE: Manual
+      LD_RUNPATH_SEARCH_PATHS:
+        - "@executable_path/Frameworks"
+        - "@loader_path/Frameworks"
+    dependencies:
+      - package: Core
+      - package: Extensions
+      - package: DesignSystem
+        embed: true
+      - package: TabBar
+      - package: Exchange
+      - package: History
+      - package: Models
+      - package: DBServices
+      - package: APIServices
+      - package: UseCases
+      - package: Network
+    postCompileScripts:
+      - path: Scripts/swiftlint.sh
+        name: Swiftlint
+        basedOnDependencyAnalysis: false
+packages:
+  Core:
+    path: Packages/Core
+  Extensions:
+    path: Packages/Extensions
+  TabBar:
+    path: Packages/TabBar
+  Exchange:
+    path: Packages/Exchange
+  History:
+    path: Packages/History
+  Models:
+    path: Packages/Models
+  DBServices:
+    path: Packages/DBServices
+  APIServices:
+    path: Packages/APIServices
+  UseCases:
+    path: Packages/UseCases
+  Network:
+    path: Packages/Network
+  DesignSystem:
+    path: Packages/DesignSystem
