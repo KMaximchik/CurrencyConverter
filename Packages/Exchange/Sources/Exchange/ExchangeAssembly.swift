@@ -36,7 +36,7 @@ public final class ExchangeAssembly: BaseAssembly {
 
 extension ExchangeAssembly: ExchangeAssemblyInterface {
     func makeExchange() -> ExchangeViewController<ExchangeViewModel> {
-        let viewModel = ExchangeViewModel()
+        let viewModel = ExchangeViewModel(currenciesUseCases: useCasesAssembly.currenciesUseCase)
         let suiView = ExchangeView(viewModel: viewModel)
         let hostingController = BaseHostingController(rootView: suiView, ignoresKeyboard: true)
         let viewController = ExchangeViewController(

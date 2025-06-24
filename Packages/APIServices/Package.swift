@@ -15,7 +15,8 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Network"),
-        .package(path: "../APIModels"),
+        .package(path: "../DTOs"),
+        .package(path: "../Domain"),
         .package(path: "../Core")
     ],
     targets: [
@@ -23,7 +24,8 @@ let package = Package(
             name: "APIServices",
             dependencies: [
                 .byName(name: "Network"),
-                .byName(name: "APIModels"),
+                .byName(name: "DTOs"),
+                .byName(name: "Domain"),
                 .byName(name: "Core")
             ],
             path: "Sources"

@@ -23,5 +23,8 @@ struct ExchangeView<ViewModel: ExchangeViewModelInterface>: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(CCColor.backgroundPrimary.color)
+        .onAppear {
+            viewModel.handleInput(.onAppear)
+        }
     }
 }

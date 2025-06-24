@@ -24,6 +24,7 @@ targets:
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UILaunchStoryboardName: LaunchScreen
+        APIKey: "$(API_KEY)"
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.kirillmaximchik.currencyconverter
       DEAD_CODE_STRIPPING: true
@@ -53,6 +54,7 @@ targets:
       - package: Database
       - package: DTOs
       - package: Entities
+      - package: StorageServices
     postCompileScripts:
       - path: Scripts/swiftlint.sh
         name: Swiftlint
@@ -86,3 +88,5 @@ packages:
     path: Packages/DTOs
   Entities:
     path: Packages/Entities
+  StorageServices:
+    path: Packages/StorageServices

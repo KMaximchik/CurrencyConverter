@@ -1,14 +1,23 @@
 import SwiftUI
 import Combine
+import UseCases
+import Domain
 
 // MARK: - ExchangeViewModelInterface
 
 protocol ExchangeViewModelInterface: ObservableObject {
-    associatedtype Output
-    var outputPublisher: AnyPublisher<Output, Never> { get }
+    var outputPublisher: AnyPublisher<ExchangeViewModelOutput, Never> { get }
+    func handleInput(_ input: ExchangeViewModelInput)
+}
 
-    associatedtype Input
-    func handleInput(_ input: Input)
+// MARK: - ExchangeViewModelOutput
+
+enum ExchangeViewModelOutput {}
+
+// MARK: - ExchangeViewModelInput
+
+enum ExchangeViewModelInput {
+    case onAppear
 }
 
 // MARK: - ExchangeViewModel
@@ -16,21 +25,34 @@ protocol ExchangeViewModelInterface: ObservableObject {
 final class ExchangeViewModel {
     // MARK: - Private Properties
 
-    private let outputSubject = PassthroughSubject<Output, Never>()
+    private let currenciesUseCases: CurrenciesUseCaseInterface
+
+    private let outputSubject = PassthroughSubject<ExchangeViewModelOutput, Never>()
+
+    // MARK: - Init
+
+    init(currenciesUseCases: CurrenciesUseCaseInterface) {
+        self.currenciesUseCases = currenciesUseCases
+    }
 }
 
 // MARK: - ExchangeViewModelInterface
 
 extension ExchangeViewModel: ExchangeViewModelInterface {
-    enum Output {}
-
-    enum Input {}
-
-    var outputPublisher: AnyPublisher<Output, Never> {
+    var outputPublisher: AnyPublisher<ExchangeViewModelOutput, Never> {
         outputSubject.eraseToAnyPublisher()
     }
 
-    func handleInput(_ input: Input) {
+    func handleInput(_ input: ExchangeViewModelInput) {
+        Task {
+            let currencies = try? await currenciesUseCases.getCurrencies(currencies: CurrencyCode.allCases)
+//            print(currencies)
 
+            let rates = try? await currenciesUseCases.getRates(
+                baseCurrency: .USD,
+                currencies: CurrencyCode.allCases
+            )
+            print(rates)
+        }
     }
 }
