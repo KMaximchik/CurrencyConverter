@@ -14,6 +14,8 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(path: "../Network"),
+        .package(path: "../Database"),
         .package(path: "../DBServices"),
         .package(path: "../APIServices"),
         .package(path: "../StorageServices"),
@@ -25,6 +27,8 @@ let package = Package(
         .target(
             name: "UseCases",
             dependencies: [
+                .byName(name: "Network"),
+                .byName(name: "Database"),
                 .byName(name: "DBServices"),
                 .byName(name: "APIServices"),
                 .byName(name: "StorageServices"),

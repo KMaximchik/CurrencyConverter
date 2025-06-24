@@ -17,15 +17,31 @@ public protocol DatabaseClientInterface {
 // MARK: - DatabaseClient
 
 public final class DatabaseClient {
+    // MARK: - Private Properties
 
-    // MARK: - Private
-
-    private let context: ModelContext
+    private let container: ModelContainer
 
     // MARK: - Init
 
-    public init(context: ModelContext) {
-        self.context = context
+    public init(container: ModelContainer) {
+        self.container = container
+    }
+
+    // MARK: - Private Methods
+
+    private func performBackground<T>(
+        _ action: @escaping (ModelContext) throws -> T
+    ) async throws -> T {
+        let context = ModelContext(container)
+
+        return try await Task.detached(priority: .background) {
+            do {
+                return try action(context)
+            } catch {
+                throw error
+            }
+        }
+        .value
     }
 }
 
@@ -33,48 +49,46 @@ public final class DatabaseClient {
 
 extension DatabaseClient: DatabaseClientInterface {
     public func save<T: PersistentModel>(_ object: T) async throws {
-        context.insert(object)
-
         do {
-            try context.save()
+            try await performBackground { context in
+                context.insert(object)
+                try context.save()
+            }
         } catch {
             throw DatabaseError.savingError(error)
         }
     }
 
     public func save<T: PersistentModel>(_ objects: [T]) async throws {
-        objects.forEach {
-            context.insert($0)
-        }
-
         do {
-            try context.save()
+            try await performBackground { context in
+                objects.forEach { context.insert($0) }
+                try context.save()
+            }
         } catch {
             throw DatabaseError.savingError(error)
         }
     }
 
     public func delete<T: PersistentModel>(_ object: T) async throws {
-        context.delete(object)
-
         do {
-            try context.save()
+            try await performBackground { context in
+                context.delete(object)
+                try context.save()
+            }
         } catch {
             throw DatabaseError.deletingError(error)
         }
     }
 
     public func deleteAll<T: PersistentModel>(of type: T.Type) async throws {
-        let descriptor = FetchDescriptor<T>()
-
         do {
-            let objects = try context.fetch(descriptor)
-
-            objects.forEach {
-                context.delete($0)
+            try await performBackground { context in
+                let descriptor = FetchDescriptor<T>()
+                let items = try context.fetch(descriptor)
+                items.forEach { context.delete($0) }
+                try context.save()
             }
-
-            try context.save()
         } catch {
             throw DatabaseError.deletingError(error)
         }
@@ -84,11 +98,12 @@ extension DatabaseClient: DatabaseClientInterface {
         predicate: Predicate<T>? = nil,
         sortDescriptors: [SortDescriptor<T>] = []
     ) async throws -> [T] {
-        var descriptor = FetchDescriptor<T>(sortBy: sortDescriptors)
-        descriptor.predicate = predicate
-
         do {
-            return try context.fetch(descriptor)
+            return try await performBackground { context in
+                var descriptor = FetchDescriptor<T>(sortBy: sortDescriptors)
+                descriptor.predicate = predicate
+                return try context.fetch(descriptor)
+            }
         } catch {
             throw DatabaseError.fetchingError(error)
         }

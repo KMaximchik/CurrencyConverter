@@ -1,3 +1,4 @@
+import Foundation
 import DTOs
 import Domain
 
@@ -14,7 +15,8 @@ extension RatesDTO {
             return Rate(
                 fromCurrencyCode: fromCurrencyCode,
                 toCurrencyCode: toCurrencyCode,
-                value: $0.value
+                value: $0.value,
+                updatedAt: Date()
             )
         }
     }

@@ -1,5 +1,5 @@
 // MARK: - UnsecureKeys
 
 public enum UnsecureKeys: String {
-    case fromSavedCurrency, toSavedCurrency
+    case fromCurrencyCode, toCurrencyCode
 }

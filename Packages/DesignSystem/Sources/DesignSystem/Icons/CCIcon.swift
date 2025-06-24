@@ -13,5 +13,13 @@ public enum CCIcon {
         public static var listIcon: CCIconToken {
             CCIconToken(name: "list.clipboard", sourceType: sourceType)
         }
+
+        public static var arrowsUpDownIcon: CCIconToken {
+            CCIconToken(name: "arrow.up.and.down", sourceType: sourceType)
+        }
+
+        public static var arrowsLeftRightIcon: CCIconToken {
+            CCIconToken(name: "arrow.left.and.right", sourceType: sourceType)
+        }
     }
 }
