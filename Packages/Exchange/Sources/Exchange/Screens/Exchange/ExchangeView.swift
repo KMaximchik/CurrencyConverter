@@ -1,6 +1,6 @@
 import SwiftUI
 import DesignSystem
-import Extensions
+import Utilities
 
 // MARK: - ExchangeView
 

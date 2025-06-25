@@ -17,7 +17,7 @@ let package = Package(
         .package(path: "../Database"),
         .package(path: "../Entities"),
         .package(path: "../Domain"),
-        .package(path: "../Extensions"),
+        .package(path: "../Utilities"),
         .package(path: "../Core")
     ],
     targets: [
@@ -27,7 +27,7 @@ let package = Package(
                 .byName(name: "Database"),
                 .byName(name: "Entities"),
                 .byName(name: "Domain"),
-                .byName(name: "Extensions"),
+                .byName(name: "Utilities"),
                 .byName(name: "Core")
             ],
             path: "Sources"

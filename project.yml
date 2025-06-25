@@ -40,7 +40,7 @@ targets:
         - "@loader_path/Frameworks"
     dependencies:
       - package: Core
-      - package: Extensions
+      - package: Utilities
       - package: DesignSystem
         embed: true
       - package: TabBar
@@ -62,8 +62,8 @@ targets:
 packages:
   Core:
     path: Packages/Core
-  Extensions:
-    path: Packages/Extensions
+  Utilities:
+    path: Packages/Utilities
   TabBar:
     path: Packages/TabBar
   Exchange:

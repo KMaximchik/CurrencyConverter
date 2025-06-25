@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../DesignSystem"),
-        .package(path: "../Extensions"),
+        .package(path: "../Utilities"),
         .package(path: "../Core"),
         .package(path: "../UseCases"),
         .package(path: "../Domain")
@@ -25,7 +25,7 @@ let package = Package(
             name: "Exchange",
             dependencies: [
                 .byName(name: "DesignSystem"),
-                .byName(name: "Extensions"),
+                .byName(name: "Utilities"),
                 .byName(name: "Core"),
                 .byName(name: "UseCases"),
                 .byName(name: "Domain")

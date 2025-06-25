@@ -15,14 +15,14 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Core"),
-        .package(path: "../Extensions")
+        .package(path: "../Utilities")
     ],
     targets: [
         .target(
             name: "StorageServices",
             dependencies: [
                 .byName(name: "Core"),
-                .byName(name: "Extensions")
+                .byName(name: "Utilities")
             ],
             path: "Sources"
         ),

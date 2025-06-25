@@ -1,5 +1,5 @@
 import Foundation
-import Extensions
+import Utilities
 
 // MARK: - UnsecurePropertiesServiceInterface
 

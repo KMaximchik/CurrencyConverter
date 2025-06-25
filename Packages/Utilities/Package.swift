@@ -3,19 +3,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "Extensions",
+    name: "Utilities",
     platforms: [
         .iOS(.v17)
     ],
     products: [
         .library(
-            name: "Extensions",
-            targets: ["Extensions"]
+            name: "Utilities",
+            targets: ["Utilities"]
         ),
     ],
     targets: [
         .target(
-            name: "Extensions"
+            name: "Utilities"
         ),
     ]
 )

@@ -1,7 +1,7 @@
 import Domain
 import Entities
 import Foundation
-import Extensions
+import Utilities
 
 // MARK: - Exchange+from
 

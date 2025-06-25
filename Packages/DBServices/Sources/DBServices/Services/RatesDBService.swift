@@ -2,7 +2,7 @@ import Entities
 import Database
 import Domain
 import Foundation
-import Extensions
+import Utilities
 
 // MARK: - RatesDBServiceInterface
 

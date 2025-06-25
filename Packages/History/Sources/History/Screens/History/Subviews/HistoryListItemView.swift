@@ -1,7 +1,7 @@
 import SwiftUI
 import Domain
 import DesignSystem
-import Extensions
+import Utilities
 
 // MARK: - HistoryListItemView
 

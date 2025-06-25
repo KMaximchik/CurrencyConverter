@@ -1,6 +1,6 @@
 import UIKit
 import DesignSystem
-import Extensions
+import Utilities
 
 // MARK: - TabBarItem
 

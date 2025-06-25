@@ -19,7 +19,7 @@ let package = Package(
         .package(path: "../DesignSystem"),
         .package(path: "../Core"),
         .package(path: "../UseCases"),
-        .package(path: "../Extensions")
+        .package(path: "../Utilities")
     ],
     targets: [
         .target(
@@ -30,7 +30,7 @@ let package = Package(
                 .byName(name: "DesignSystem"),
                 .byName(name: "Core"),
                 .byName(name: "UseCases"),
-                .byName(name: "Extensions")
+                .byName(name: "Utilities")
             ],
             path: "Sources"
         ),
