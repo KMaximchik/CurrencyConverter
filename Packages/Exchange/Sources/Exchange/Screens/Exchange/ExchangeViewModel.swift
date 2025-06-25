@@ -76,8 +76,8 @@ final class ExchangeViewModel {
 
     private func setupBindings() {
         $fromValue
-            .receive(on: RunLoop.main)
-            .debounce(for: .milliseconds(1500), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(1.5), scheduler: RunLoop.main)
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] value in
                 guard
@@ -93,10 +93,10 @@ final class ExchangeViewModel {
             .store(in: &cancellables)
 
         $fromCurrencyCode
+            .compactMap { $0 }
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] value in
-                guard let value else { return }
-
                 self?.availableToCurrencies = CurrencyCode.allCases.filter { $0.rawValue != value }
 
                 guard let toCurrencyCode = self?.toCurrencyCode else { return }
@@ -110,10 +110,10 @@ final class ExchangeViewModel {
             .store(in: &cancellables)
 
         $toCurrencyCode
+            .compactMap { $0 }
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] value in
-                guard let value else { return }
-
                 self?.availableFromCurrencies = CurrencyCode.allCases.filter { $0.rawValue != value }
 
                 guard let fromCurrencyCode = self?.fromCurrencyCode else { return }
@@ -195,6 +195,7 @@ final class ExchangeViewModel {
                 loadingTask.cancel()
 
                 await MainActor.run {
+                    caption = nil
                     screenState = .error(error.message)
                     scheduleState(state: .pending, after: 4)
                 }
@@ -219,6 +220,8 @@ final class ExchangeViewModel {
     }
 
     private func setupInitialCurrencyPair() {
+        guard fromCurrencyCode == nil && toCurrencyCode == nil else { return }
+
         let currencyPair = currenciesUseCase.getSavedCurrencyPair()
 
         fromCurrencyCode = currencyPair?.fromCurrencyCode

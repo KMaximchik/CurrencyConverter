@@ -33,9 +33,32 @@ final class CurrenciesUseCase {
         self.ratesAPIService = ratesAPIService
         self.ratesDBService = ratesDBService
         self.unsecurePropertiesService = unsecurePropertiesService
+
+        fetchInitialRates()
     }
 
     // MARK: - Private Methods
+
+    private func fetchInitialRates() {
+        Task {
+            let codes = CurrencyCode.allCases
+
+            await withTaskGroup(of: Void.self) { group in
+                codes.forEach { code in
+                    group.addTask {
+                        guard
+                            let rates = try? await self.ratesAPIService.getRates(
+                                baseCurrency: code.rawValue,
+                                currencies: codes.map { $0.rawValue }.joined(separator: ",")
+                            )
+                        else { return }
+
+                        try? await self.saveRates(rates, baseCurrency: code)
+                    }
+                }
+            }
+        }
+    }
 
     private func saveRates(_ rates: [Rate], baseCurrency: CurrencyCode) async throws {
         do {
@@ -43,6 +66,13 @@ final class CurrenciesUseCase {
         } catch {
             throw error
         }
+    }
+
+    private func getCachedRate(fromCurrencyCode: CurrencyCode, toCurrencyCode: CurrencyCode) async -> Rate? {
+        try? await ratesDBService.fetchRateBy(
+            toCurrencyCode: toCurrencyCode.rawValue,
+            fromCurrencyCode: fromCurrencyCode.rawValue
+        )
     }
 
     private func needsRefresh(_ rate: Rate) -> Bool {
@@ -55,10 +85,7 @@ final class CurrenciesUseCase {
 extension CurrenciesUseCase: CurrenciesUseCaseInterface {
     func getRate(baseCurrency: CurrencyCode, toCurrency: CurrencyCode) async -> Result<Rate?, AppError> {
         do {
-            let cachedRate = try? await ratesDBService.fetchRateBy(
-                toCurrencyCode: toCurrency.rawValue,
-                fromCurrencyCode: baseCurrency.rawValue
-            )
+            let cachedRate = await getCachedRate(fromCurrencyCode: baseCurrency, toCurrencyCode: toCurrency)
 
             if let cachedRate, !needsRefresh(cachedRate) {
                 return .success(cachedRate)
@@ -75,10 +102,7 @@ extension CurrenciesUseCase: CurrenciesUseCaseInterface {
 
             return .success(rate)
         } catch {
-            let cachedRate = try? await ratesDBService.fetchRateBy(
-                toCurrencyCode: toCurrency.rawValue,
-                fromCurrencyCode: baseCurrency.rawValue
-            )
+            let cachedRate = await getCachedRate(fromCurrencyCode: baseCurrency, toCurrencyCode: toCurrency)
 
             if let cachedRate {
                 return .success(cachedRate)
