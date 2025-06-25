@@ -37,12 +37,16 @@ final class CurrenciesUseCase {
 
     // MARK: - Private Methods
 
-    private func saveRates(_ rates: [Rate]) async throws {
+    private func saveRates(_ rates: [Rate], baseCurrency: CurrencyCode) async throws {
         do {
-            try await ratesDBService.saveRates(rates)
+            try await ratesDBService.saveRates(rates, baseCurrency: baseCurrency.rawValue)
         } catch {
             throw error
         }
+    }
+
+    private func needsRefresh(_ rate: Rate) -> Bool {
+        Date().timeIntervalSince(rate.updatedAt) > 60 * 10
     }
 }
 
@@ -51,17 +55,35 @@ final class CurrenciesUseCase {
 extension CurrenciesUseCase: CurrenciesUseCaseInterface {
     func getRate(baseCurrency: CurrencyCode, toCurrency: CurrencyCode) async -> Result<Rate?, AppError> {
         do {
-            let rates = try await ratesAPIService.getRates(
+            let cachedRate = try? await ratesDBService.fetchRateBy(
+                toCurrencyCode: toCurrency.rawValue,
+                fromCurrencyCode: baseCurrency.rawValue
+            )
+
+            if let cachedRate, !needsRefresh(cachedRate) {
+                return .success(cachedRate)
+            }
+
+            let actualRates = try await ratesAPIService.getRates(
                 baseCurrency: baseCurrency.rawValue,
                 currencies: CurrencyCode.allCases.map { $0.rawValue }.joined(separator: ",")
             )
 
-            try await saveRates(rates)
+            try await saveRates(actualRates, baseCurrency: baseCurrency)
 
-            let rate = rates.first { $0.fromCurrencyCode == baseCurrency && $0.toCurrencyCode == toCurrency }
+            let rate = actualRates.first { $0.fromCurrencyCode == baseCurrency && $0.toCurrencyCode == toCurrency }
 
             return .success(rate)
         } catch {
+            let cachedRate = try? await ratesDBService.fetchRateBy(
+                toCurrencyCode: toCurrency.rawValue,
+                fromCurrencyCode: baseCurrency.rawValue
+            )
+
+            if let cachedRate {
+                return .success(cachedRate)
+            }
+
             return .failure(AppError(from: error))
         }
     }

@@ -16,6 +16,16 @@ public struct CCDecimalInput: View {
     private let maximumFractionDigits: Int
     private let disabled: Bool
 
+    private var numberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        formatter.minimumFractionDigits = .zero
+        formatter.maximumFractionDigits = maximumFractionDigits
+
+        return formatter
+    }
+
     // MARK: - Init
 
     public init(
@@ -125,16 +135,10 @@ public struct CCDecimalInput: View {
     }
 
     private func makeDecimal(from string: String) -> Decimal {
-        Decimal(string: string) ?? .zero
+        numberFormatter.number(from: string)?.decimalValue ?? .zero
     }
 
     private func formattedString(from decimal: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = .current
-        formatter.minimumFractionDigits = .zero
-        formatter.maximumFractionDigits = maximumFractionDigits
-
-        return formatter.string(from: NSDecimalNumber(decimal: decimal)) ?? ""
+        numberFormatter.string(from: NSDecimalNumber(decimal: decimal)) ?? ""
     }
 }

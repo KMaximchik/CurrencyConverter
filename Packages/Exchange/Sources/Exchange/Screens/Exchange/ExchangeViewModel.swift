@@ -142,12 +142,13 @@ final class ExchangeViewModel {
                     rateValue: rate.value
                 )
 
+                guard fromValue > .zero else {
+                    self?.toValue = .zero
+                    return
+                }
+
                 guard
-                    fromValue > .zero,
-                    let calculatedValue = self?.currenciesUseCase.calculate(
-                        value: fromValue,
-                        rate: rate
-                    )
+                    let calculatedValue = self?.currenciesUseCase.calculate(value: fromValue, rate: rate)
                 else { return }
 
                 self?.toValue = calculatedValue

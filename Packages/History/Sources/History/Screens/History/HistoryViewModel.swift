@@ -107,7 +107,7 @@ final class HistoryViewModel {
                 loadingTask.cancel()
 
                 await MainActor.run {
-                    self.exchanges = exchanges.reversed()
+                    self.exchanges = exchanges
                     screenState = .pending
                 }
 

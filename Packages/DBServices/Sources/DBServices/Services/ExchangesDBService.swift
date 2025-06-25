@@ -1,3 +1,4 @@
+import Foundation
 import Entities
 import Database
 import Domain
@@ -35,8 +36,14 @@ extension ExchangesDBService: ExchangesDBServiceInterface {
     }
 
     func fetchExchanges() async throws -> [Exchange] {
+        let sortDescriptor = SortDescriptor<ExchangeEntity>(\.createdAt, order: .reverse)
+
         do {
-            let entities: [ExchangeEntity] = try await databaseClient.fetch(predicate: nil, sortDescriptors: [])
+            let entities: [ExchangeEntity] = try await databaseClient.fetch(
+                predicate: nil,
+                sortDescriptors: [sortDescriptor]
+            )
+
             return entities.compactMap { Exchange(from: $0) }
         } catch {
             throw error
