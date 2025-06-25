@@ -121,9 +121,13 @@ struct HistoryView<ViewModel: HistoryViewModelInterface>: View {
                     options: viewModel.availableFromCurrencies.map { $0.rawValue }
                 )
 
-                CCIcon.System.arrowRightIcon.image
-                    .font(CCFont.body)
-                    .foregroundStyle(CCColor.labelPrimary.color)
+                Button {
+                    viewModel.handleInput(.onTapSwapButton)
+                } label: {
+                    CCIcon.System.arrowsLeftRightIcon.image
+                        .font(CCFont.body)
+                        .foregroundStyle(CCColor.labelPrimary.color)
+                }
 
                 CCDropdownMenuButton(
                     selectedOption: $viewModel.toCurrencyCode,

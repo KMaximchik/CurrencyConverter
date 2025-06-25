@@ -34,7 +34,9 @@ extension RatesAPIService: RatesAPIServiceInterface {
                 )
             )
 
-            return rates.mapToRates(baseCurrency: baseCurrency)
+            return rates.data.compactMap {
+                Rate(from: $0.value, baseCurrency: baseCurrency, resultCurrency: $0.key)
+            }
         } catch {
             throw error
         }

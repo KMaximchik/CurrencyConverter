@@ -28,6 +28,7 @@ enum HistoryViewModelOutput {}
 
 enum HistoryViewModelInput {
     case onAppear
+    case onTapSwapButton
     case onTapSearchButton
     case onTapResetButton
 }
@@ -121,6 +122,12 @@ final class HistoryViewModel {
         }
     }
 
+    private func swapSelectedCurrencies() {
+        let tempCurrencyCode = fromCurrencyCode
+        fromCurrencyCode = toCurrencyCode
+        toCurrencyCode = tempCurrencyCode
+    }
+
     private func searchExchanges() {
         guard let fromCurrencyCode, let toCurrencyCode else {
             filteredExchanges = exchanges
@@ -165,6 +172,9 @@ extension HistoryViewModel: HistoryViewModelInterface {
             guard fromCurrencyCode == nil, toCurrencyCode == nil else { return }
             
             fetchHistory()
+
+        case .onTapSwapButton:
+            swapSelectedCurrencies()
 
         case .onTapSearchButton:
             searchExchanges()

@@ -33,7 +33,7 @@ extension CurrenciesAPIService: CurrenciesAPIServiceInterface {
                 )
             )
 
-            return currencies.data.values.map { $0.mapToCurrency() }
+            return currencies.data.values.map { Currency(from: $0) }
         } catch {
             throw error
         }
