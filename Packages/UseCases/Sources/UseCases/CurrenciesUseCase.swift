@@ -8,7 +8,6 @@ import Core
 // MARK: - CurrenciesUseCaseInterface
 
 public protocol CurrenciesUseCaseInterface {
-    func getCurrencies(currencies: [CurrencyCode]) async -> Result<[Currency], AppError>
     func getRate(baseCurrency: CurrencyCode, toCurrency: CurrencyCode) async -> Result<Rate?, AppError>
     func calculate(value: Decimal, rate: Rate) -> Decimal
     func getSavedCurrencyPair() -> (fromCurrencyCode: String, toCurrencyCode: String)?
@@ -20,7 +19,6 @@ public protocol CurrenciesUseCaseInterface {
 final class CurrenciesUseCase {
     // MARK: - Private Properties
 
-    private let currenciesAPIService: CurrenciesAPIServiceInterface
     private let ratesAPIService: RatesAPIServiceInterface
     private let ratesDBService: RatesDBServiceInterface
     private var unsecurePropertiesService: UnsecurePropertiesServiceInterface
@@ -28,12 +26,10 @@ final class CurrenciesUseCase {
     // MARK: - Init
 
     init(
-        currenciesAPIService: CurrenciesAPIServiceInterface,
         ratesAPIService: RatesAPIServiceInterface,
         ratesDBService: RatesDBServiceInterface,
         unsecurePropertiesService: UnsecurePropertiesServiceInterface
     ) {
-        self.currenciesAPIService = currenciesAPIService
         self.ratesAPIService = ratesAPIService
         self.ratesDBService = ratesDBService
         self.unsecurePropertiesService = unsecurePropertiesService
@@ -53,18 +49,6 @@ final class CurrenciesUseCase {
 // MARK: - CurrenciesUseCaseInterface
 
 extension CurrenciesUseCase: CurrenciesUseCaseInterface {
-    func getCurrencies(currencies: [CurrencyCode]) async -> Result<[Currency], AppError> {
-        do {
-            let currencies = try await currenciesAPIService.getCurrencies(
-                currencies: currencies.map { $0.rawValue }.joined(separator: ",")
-            )
-
-            return .success(currencies)
-        } catch {
-            return .failure(AppError(from: error))
-        }
-    }
-
     func getRate(baseCurrency: CurrencyCode, toCurrency: CurrencyCode) async -> Result<Rate?, AppError> {
         do {
             let rates = try await ratesAPIService.getRates(

@@ -15,7 +15,6 @@ public final class UseCasesAssembly: UseCasesAssemblyInterface {
     // MARK: - Public Properties
 
     public lazy var currenciesUseCase: CurrenciesUseCaseInterface = CurrenciesUseCase(
-        currenciesAPIService: apiServicesAssembly.currenciesAPIService,
         ratesAPIService: apiServicesAssembly.ratesAPIService,
         ratesDBService: dbServicesAssembly.ratesDBService,
         unsecurePropertiesService: storageServicesAssembly.unsecurePropertiesService
