@@ -21,5 +21,21 @@ public enum CCIcon {
         public static var arrowsLeftRightIcon: CCIconToken {
             CCIconToken(name: "arrow.left.and.right", sourceType: sourceType)
         }
+
+        public static var arrowRightIcon: CCIconToken {
+            CCIconToken(name: "arrow.right", sourceType: sourceType)
+        }
+
+        public static var pencilListClipboardIcon: CCIconToken {
+            CCIconToken(name: "pencil.and.list.clipboard", sourceType: sourceType)
+        }
+
+        public static var magnifyingglassIcon: CCIconToken {
+            CCIconToken(name: "magnifyingglass", sourceType: sourceType)
+        }
+
+        public static var xmarkIcon: CCIconToken {
+            CCIconToken(name: "xmark", sourceType: sourceType)
+        }
     }
 }

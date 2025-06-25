@@ -10,7 +10,7 @@ import Core
 public protocol CurrenciesUseCaseInterface {
     func getCurrencies(currencies: [CurrencyCode]) async -> Result<[Currency], AppError>
     func getRate(baseCurrency: CurrencyCode, toCurrency: CurrencyCode) async -> Result<Rate?, AppError>
-    func calculate(value: Decimal, rate: Rate) -> Decimal?
+    func calculate(value: Decimal, rate: Rate) -> Decimal
     func getSavedCurrencyPair() -> (fromCurrencyCode: String, toCurrencyCode: String)?
     func saveCurrencyPair(fromCurrencyCode: String, toCurrencyCode: String)
 }
@@ -82,16 +82,8 @@ extension CurrenciesUseCase: CurrenciesUseCaseInterface {
         }
     }
 
-    func calculate(value: Decimal, rate: Rate) -> Decimal? {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = .current
-        formatter.minimumFractionDigits = .zero
-        formatter.maximumFractionDigits = 2
-
-        let editedString = formatter.string(from: NSDecimalNumber(decimal: value * rate.value)) ?? ""
-
-        return formatter.number(from: editedString)?.decimalValue
+    func calculate(value: Decimal, rate: Rate) -> Decimal {
+        rate.value * value
     }
 
     func getSavedCurrencyPair() -> (fromCurrencyCode: String, toCurrencyCode: String)? {

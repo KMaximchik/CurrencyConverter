@@ -27,7 +27,7 @@ final class RatesDBService {
 extension RatesDBService: RatesDBServiceInterface {
     func saveRates(_ rates: [Rate]) async throws {
         do {
-            try await databaseClient.save(rates.map { RateEntity(rate: $0) })
+            try await databaseClient.save(rates.map { RateEntity(from: $0) })
         } catch {
             throw error
         }

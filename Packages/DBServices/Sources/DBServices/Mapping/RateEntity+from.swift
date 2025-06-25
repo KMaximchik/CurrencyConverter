@@ -1,15 +1,16 @@
 import Foundation
 import Entities
 import Domain
+import Extensions
 
 // MARK: - RateEntity+from
 
 public extension RateEntity {
-    convenience init(rate: Rate) {
+    convenience init(from rate: Rate) {
         self.init(
             fromCurrencyCode: rate.fromCurrencyCode.rawValue,
             toCurrencyCode: rate.toCurrencyCode.rawValue,
-            value: NSDecimalNumber(decimal: rate.value).stringValue,
+            value: rate.value.toString() ?? "",
             updatedAt: rate.updatedAt
         )
     }

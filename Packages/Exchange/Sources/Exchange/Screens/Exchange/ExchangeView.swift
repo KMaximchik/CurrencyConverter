@@ -80,7 +80,7 @@ struct ExchangeView<ViewModel: ExchangeViewModelInterface>: View {
             CCDropdownMenuButton(
                 selectedOption: $viewModel.fromCurrencyCode,
                 placeholder: "Exchange.button.currency.placeholder".localized(),
-                options: viewModel.currenciesCodes.map { $0.rawValue }
+                options: viewModel.availableFromCurrencies.map { $0.rawValue }
             )
 
             Button {
@@ -95,7 +95,7 @@ struct ExchangeView<ViewModel: ExchangeViewModelInterface>: View {
             CCDropdownMenuButton(
                 selectedOption: $viewModel.toCurrencyCode,
                 placeholder: "Exchange.button.currency.placeholder".localized(),
-                options: viewModel.currenciesCodes.map { $0.rawValue }
+                options: viewModel.availableToCurrencies.map { $0.rawValue }
             )
         }
     }

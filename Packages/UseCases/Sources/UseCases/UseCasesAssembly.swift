@@ -6,6 +6,7 @@ import StorageServices
 
 public protocol UseCasesAssemblyInterface {
     var currenciesUseCase: CurrenciesUseCaseInterface { get }
+    var historyUseCase: HistoryUseCaseInterface { get }
 }
 
 // MARK: - UseCasesAssembly
@@ -18,6 +19,10 @@ public final class UseCasesAssembly: UseCasesAssemblyInterface {
         ratesAPIService: apiServicesAssembly.ratesAPIService,
         ratesDBService: dbServicesAssembly.ratesDBService,
         unsecurePropertiesService: storageServicesAssembly.unsecurePropertiesService
+    )
+
+    public lazy var historyUseCase: HistoryUseCaseInterface = HistoryUseCase(
+        exchangesDBService: dbServicesAssembly.exchangesDBService
     )
 
     // MARK: - Private Properties

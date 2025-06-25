@@ -3,10 +3,47 @@ import SwiftUI
 // MARK: - CCDropdownMenuButton
 
 public struct CCDropdownMenuButton: View {
+    // MARK: - Nested Types
+
+    public enum Size {
+        case large, medium
+
+        var horizontalPadding: CGFloat {
+            switch self {
+            case .large:
+                CCSpacing.lg
+
+            case .medium:
+                CCSpacing.md
+            }
+        }
+
+        var verticalPadding: CGFloat {
+            switch self {
+            case .large:
+                CCSpacing.md
+
+            case .medium:
+                CCSpacing.sm
+            }
+        }
+
+        var font: Font {
+            switch self {
+            case .large:
+                CCFont.body
+
+            case .medium:
+                CCFont.subheadline
+            }
+        }
+    }
+
     // MARK: - Private Properties
 
     @Binding private var selectedOption: String?
 
+    private let size: Size
     private let placeholder: String
     private let options: [String]
 
@@ -14,10 +51,12 @@ public struct CCDropdownMenuButton: View {
 
     public init(
         selectedOption: Binding<String?>,
+        size: Size = .large,
         placeholder: String,
         options: [String]
     ) {
         self._selectedOption = selectedOption
+        self.size = size
         self.placeholder = placeholder
         self.options = options
     }
@@ -34,16 +73,16 @@ public struct CCDropdownMenuButton: View {
         } label: {
             HStack(spacing: CCSpacing.md) {
                 Text(selectedOption ?? placeholder)
-                    .font(CCFont.body)
+                    .font(size.font)
                     .foregroundStyle(CCColor.labelPrimaryInvariably.color)
                     .textCase(.uppercase)
 
                 CCIcon.System.arrowsUpDownIcon.image
-                    .font(CCFont.body)
+                    .font(size.font)
                     .foregroundStyle(CCColor.labelPrimaryInvariably.color)
             }
-            .padding(.vertical, CCSpacing.md)
-            .padding(.horizontal, CCSpacing.lg)
+            .padding(.vertical, size.verticalPadding)
+            .padding(.horizontal, size.horizontalPadding)
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: CCCornerRadius.sm)

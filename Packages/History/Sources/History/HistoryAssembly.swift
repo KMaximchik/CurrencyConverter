@@ -36,7 +36,7 @@ public final class HistoryAssembly: BaseAssembly {
 
 extension HistoryAssembly: HistoryAssemblyInterface {
     func makeHistory() -> HistoryViewController<HistoryViewModel> {
-        let viewModel = HistoryViewModel()
+        let viewModel = HistoryViewModel(historyUseCase: useCasesAssembly.historyUseCase)
         let suiView = HistoryView(viewModel: viewModel)
         let hostingController = BaseHostingController(rootView: suiView, ignoresKeyboard: true)
         let viewController = HistoryViewController(

@@ -14,7 +14,8 @@ protocol ExchangeViewModelInterface: ObservableObject {
     var toValue: Decimal { get set }
     var caption: String? { get }
     var maximumFractionDigits: Int { get }
-    var currenciesCodes: [CurrencyCode] { get }
+    var availableFromCurrencies: [CurrencyCode] { get }
+    var availableToCurrencies: [CurrencyCode] { get }
     var defaultInputsValue: Decimal { get }
 
     var outputPublisher: AnyPublisher<ExchangeViewModelOutput, Never> { get }
@@ -43,9 +44,10 @@ final class ExchangeViewModel {
     @Published var fromValue = Decimal.zero
     @Published var toValue = Decimal.zero
     @Published var caption: String?
+    @Published var availableFromCurrencies = CurrencyCode.allCases
+    @Published var availableToCurrencies = CurrencyCode.allCases
 
     var maximumFractionDigits: Int = 2
-    let currenciesCodes = CurrencyCode.allCases
     var defaultInputsValue: Decimal = 1
 
     // MARK: - Private Properties
@@ -53,14 +55,19 @@ final class ExchangeViewModel {
     @Published private var actualRate: Rate?
 
     private let currenciesUseCase: CurrenciesUseCaseInterface
+    private let historyUseCase: HistoryUseCaseInterface
 
     private let outputSubject = PassthroughSubject<ExchangeViewModelOutput, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
 
-    init(currenciesUseCase: CurrenciesUseCaseInterface) {
+    init(
+        currenciesUseCase: CurrenciesUseCaseInterface,
+        historyUseCase: HistoryUseCaseInterface
+    ) {
         self.currenciesUseCase = currenciesUseCase
+        self.historyUseCase = historyUseCase
 
         setupBindings()
     }
@@ -88,7 +95,11 @@ final class ExchangeViewModel {
         $fromCurrencyCode
             .receive(on: RunLoop.main)
             .sink { [weak self] value in
-                guard let value, let toCurrencyCode = self?.toCurrencyCode else { return }
+                guard let value else { return }
+
+                self?.availableToCurrencies = CurrencyCode.allCases.filter { $0.rawValue != value }
+
+                guard let toCurrencyCode = self?.toCurrencyCode else { return }
 
                 self?.getActualRate(
                     fromCurrencyCode: value,
@@ -101,7 +112,11 @@ final class ExchangeViewModel {
         $toCurrencyCode
             .receive(on: RunLoop.main)
             .sink { [weak self] value in
-                guard let value, let fromCurrencyCode = self?.fromCurrencyCode else { return }
+                guard let value else { return }
+
+                self?.availableFromCurrencies = CurrencyCode.allCases.filter { $0.rawValue != value }
+
+                guard let fromCurrencyCode = self?.fromCurrencyCode else { return }
 
                 self?.getActualRate(
                     fromCurrencyCode: fromCurrencyCode,
@@ -117,16 +132,30 @@ final class ExchangeViewModel {
                 guard
                     let rate,
                     let fromValue = self?.fromValue,
+                    let fromCurrencyCode = self?.fromCurrencyCode,
+                    let toCurrencyCode = self?.toCurrencyCode
+                else { return }
+
+                self?.caption = self?.makeCaption(
+                    fromCurrencyCode: self?.fromCurrencyCode,
+                    toCurrencyCode: self?.toCurrencyCode,
+                    rateValue: rate.value
+                )
+
+                guard
+                    fromValue > .zero,
                     let calculatedValue = self?.currenciesUseCase.calculate(
                         value: fromValue,
                         rate: rate
                     )
                 else { return }
-                
+
                 self?.toValue = calculatedValue
-                self?.caption = self?.makeCaption(
-                    fromCurrencyCode: self?.fromCurrencyCode,
-                    toCurrencyCode: self?.toCurrencyCode,
+                self?.saveExchange(
+                    fromCurrencyCode: fromCurrencyCode,
+                    toCurrencyCode: toCurrencyCode,
+                    value: calculatedValue,
+                    initialValue: fromValue,
                     rateValue: rate.value
                 )
             }
@@ -176,16 +205,9 @@ final class ExchangeViewModel {
         guard
             let fromCurrencyCode,
             let toCurrencyCode,
-            let rateValue
+            let rateValue,
+            let rateValueString = rateValue.toString()
         else { return nil }
-
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.locale = .current
-        formatter.minimumFractionDigits = .zero
-        formatter.maximumFractionDigits = 2
-
-        guard let rateValueString = formatter.string(from: NSDecimalNumber(decimal: rateValue)) else { return nil }
 
         return String(
             format: "Exchange.caption".localized(),
@@ -204,6 +226,43 @@ final class ExchangeViewModel {
 
     private func saveCurrencyPair(fromCurrencyCode: String, toCurrencyCode: String) {
         currenciesUseCase.saveCurrencyPair(fromCurrencyCode: fromCurrencyCode, toCurrencyCode: toCurrencyCode)
+    }
+
+    private func saveExchange(
+        fromCurrencyCode: String,
+        toCurrencyCode: String,
+        value: Decimal,
+        initialValue: Decimal,
+        rateValue: Decimal
+    ) {
+        Task {
+            switch await historyUseCase.saveExchange(
+                fromCurrencyCode: fromCurrencyCode,
+                toCurrencyCode: toCurrencyCode,
+                value: value,
+                initialValue: initialValue,
+                rateValue: rateValue
+            ) {
+            case .success:
+                break
+
+            case let .failure(error):
+                await MainActor.run {
+                    screenState = .error(error.message)
+                    scheduleState(state: .pending, after: 4)
+                }
+            }
+        }
+    }
+
+    private func swapSelectedCurrencies() {
+        let tempCurrencyCode = fromCurrencyCode
+        fromCurrencyCode = toCurrencyCode
+        toCurrencyCode = tempCurrencyCode
+
+        let tempValue = fromValue
+        fromValue = toValue
+        toValue = tempValue
     }
 
     @discardableResult
@@ -230,13 +289,7 @@ extension ExchangeViewModel: ExchangeViewModelInterface {
             setupInitialCurrencyPair()
 
         case .onTapSwapButton:
-            let tempCurrencyCode = fromCurrencyCode
-            fromCurrencyCode = toCurrencyCode
-            toCurrencyCode = tempCurrencyCode
-
-            let tempValue = fromValue
-            fromValue = toValue
-            toValue = tempValue
+            swapSelectedCurrencies()
         }
     }
 }

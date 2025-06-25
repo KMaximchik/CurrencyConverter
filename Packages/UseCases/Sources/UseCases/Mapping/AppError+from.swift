@@ -32,8 +32,14 @@ public extension AppError {
 
     init(from databaseError: DatabaseError) {
         switch databaseError {
-        case .savingError, .deletingError, .fetchingError:
-            self = .database(message: "Error.unknown.title".localized())
+        case .savingError:
+            self = .database(message: "Error.database.saving.title".localized())
+
+        case .fetchingError:
+            self = .database(message: "Error.database.fetching.title".localized())
+
+        case .deletingError:
+            self = .database(message: "Error.database.deleting.title".localized())
         }
     }
 }

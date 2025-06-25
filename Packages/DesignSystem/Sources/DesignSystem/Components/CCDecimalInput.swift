@@ -55,7 +55,7 @@ public struct CCDecimalInput: View {
     private var textField: some View {
         TextField("", text: $text)
             .font(CCFont.body)
-            .foregroundStyle(disabled ? CCColor.labelSecondary.color : CCColor.labelPrimary.color)
+            .foregroundStyle(disabled ? CCColor.separatorPrimary.color : CCColor.labelPrimary.color)
             .padding(.horizontal, CCSpacing.md)
             .padding(.vertical, CCSpacing.sm)
             .frame(maxWidth: .infinity)
