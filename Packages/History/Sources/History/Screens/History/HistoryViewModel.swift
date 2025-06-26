@@ -39,6 +39,7 @@ final class HistoryViewModel {
 
     // MARK: - Private Properties
 
+    private var isViewLoaded = false
     private let outputSubject = PassthroughSubject<HistoryViewModelOutput, Never>()
 
     private let historyUseCase: HistoryUseCaseInterface
@@ -64,8 +65,13 @@ final class HistoryViewModel {
                         self.exchanges.removeAll()
                     }
 
-                    if !exchanges.isEmpty {
-                        self.exchanges.append(contentsOf: exchanges)
+                    let lastExchanges = Array(self.exchanges.suffix(historyUseCase.fetchLimit))
+                    let exchangesToAppend = exchanges.filter { exchange in
+                        !lastExchanges.contains(where: { $0.id == exchange.id })
+                    }
+
+                    if !exchangesToAppend.isEmpty {
+                        self.exchanges.append(contentsOf: exchangesToAppend)
                     }
 
                     if screenState != .pending {
@@ -105,7 +111,10 @@ extension HistoryViewModel: HistoryViewModelInterface {
     func handleInput(_ input: HistoryViewModelInput) {
         switch input {
         case .onAppear:
+            guard !isViewLoaded else { return }
+
             fetchHistory()
+            isViewLoaded = true
 
         case .onTapSearchButton:
             outputSubject.send(.goSearch)

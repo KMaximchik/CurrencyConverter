@@ -8,6 +8,7 @@ struct HistoryView<ViewModel: HistoryViewModelInterface>: View {
     // MARK: - Private Properties
 
     @State private var showScrollToTopButton = false
+    @State private var shouldScrollToTop = false
 
     @ObservedObject private var viewModel: ViewModel
 
@@ -43,9 +44,8 @@ struct HistoryView<ViewModel: HistoryViewModelInterface>: View {
         CCNavigationBar(
             left: {
                 Button {
-                    withAnimation {
-                        viewModel.handleInput(.onTapRefreshButton)
-                    }
+                    shouldScrollToTop = true
+                    viewModel.handleInput(.onTapRefreshButton)
                 } label: {
                     CCIcon.System.arrowClockwiseIcon.image
                         .font(CCFont.body)
@@ -154,6 +154,17 @@ struct HistoryView<ViewModel: HistoryViewModelInterface>: View {
                 }
             }
             .coordinateSpace(name: "id:historyScroll")
+            .onChange(of: shouldScrollToTop) { _, newValue in
+                guard newValue else {
+                    return
+                }
+
+                withAnimation {
+                    proxy.scrollTo("id:reloadTipView", anchor: .top)
+                }
+
+                self.shouldScrollToTop = false
+            }
         }
     }
 }
