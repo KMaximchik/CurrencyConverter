@@ -40,7 +40,7 @@ To setup the project, you need to run the `start.command` script in the root of 
 
 ### History Searching Screen
 
-<img src="https://github.com/user-attachments/assets/09b1fdd5-4c96-48c7-b4d5-b3ab11475c29" alt="" width="300"/>
+<img src="https://github.com/user-attachments/assets/21c03fb7-6da4-4782-b16b-aef030c93c85" alt="" width="300"/>
 <img src="https://github.com/user-attachments/assets/73d550c3-dc02-427e-8167-c3edd65db58d" alt="" width="300"/>
 
 
