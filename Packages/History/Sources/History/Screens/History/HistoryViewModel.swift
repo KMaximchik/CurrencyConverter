@@ -39,6 +39,7 @@ final class HistoryViewModel {
 
     // MARK: - Private Properties
 
+    private var isLoadingExchanges = false
     private var isViewLoaded = false
     private let outputSubject = PassthroughSubject<HistoryViewModelOutput, Never>()
 
@@ -53,6 +54,8 @@ final class HistoryViewModel {
     // MARK: - Private Methods
 
     private func fetchHistory(isReloading: Bool = false) {
+        isLoadingExchanges = true
+
         Task {
             let loadingTask = scheduleState(state: .loading, after: 2)
 
@@ -62,16 +65,9 @@ final class HistoryViewModel {
 
                 await MainActor.run {
                     if isReloading {
-                        self.exchanges.removeAll()
-                    }
-
-                    let lastExchanges = Array(self.exchanges.suffix(historyUseCase.fetchLimit))
-                    let exchangesToAppend = exchanges.filter { exchange in
-                        !lastExchanges.contains(where: { $0.id == exchange.id })
-                    }
-
-                    if !exchangesToAppend.isEmpty {
-                        self.exchanges.append(contentsOf: exchangesToAppend)
+                        self.exchanges = exchanges
+                    } else if !exchanges.isEmpty {
+                        self.exchanges.append(contentsOf: exchanges)
                     }
 
                     if screenState != .pending {
@@ -87,6 +83,8 @@ final class HistoryViewModel {
                     scheduleState(state: .pending, after: 4)
                 }
             }
+
+            isLoadingExchanges = false
         }
     }
 
@@ -111,8 +109,9 @@ extension HistoryViewModel: HistoryViewModelInterface {
     func handleInput(_ input: HistoryViewModelInput) {
         switch input {
         case .onAppear:
-            guard !isViewLoaded else { return }
+            guard !isViewLoaded || exchanges.isEmpty else { return }
 
+            historyUseCase.resetPagination()
             fetchHistory()
             isViewLoaded = true
 
@@ -124,7 +123,7 @@ extension HistoryViewModel: HistoryViewModelInterface {
             fetchHistory(isReloading: true)
 
         case let .onAppearExchange(index):
-            guard index == exchanges.indices.last else { return }
+            guard index == exchanges.indices.last, !isLoadingExchanges else { return }
 
             fetchHistory()
         }

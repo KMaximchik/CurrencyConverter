@@ -6,8 +6,6 @@ import Core
 // MARK: - HistoryUseCaseInterface
 
 public protocol HistoryUseCaseInterface {
-    var fetchLimit: Int { get }
-
     func fetchExchanges() async -> Result<[Exchange], AppError>
     func saveExchange(
         fromCurrencyCode: String,
@@ -26,13 +24,11 @@ public protocol HistoryUseCaseInterface {
 // MARK: - HistoryUseCase
 
 final class HistoryUseCase {
-    // MARK: - Internal Properties
-
-    var fetchLimit = 20
-
     // MARK: - Private Properties
 
     private var currentPage = Int.zero
+    private var fetchLimit = 20
+    private var hasMorePages = true
 
     private let exchangesDBService: ExchangesDBServiceInterface
 
@@ -49,11 +45,17 @@ final class HistoryUseCase {
 
 extension HistoryUseCase: HistoryUseCaseInterface {
     func fetchExchanges() async -> Result<[Exchange], AppError> {
+        guard hasMorePages else {
+            return .success([])
+        }
+
         do {
             let exchanges = try await exchangesDBService.fetchExchanges(page: currentPage, fetchLimit: fetchLimit)
 
             if exchanges.count == fetchLimit {
                 currentPage += 1
+            } else {
+                hasMorePages = false
             }
 
             return .success(exchanges)
@@ -107,5 +109,6 @@ extension HistoryUseCase: HistoryUseCaseInterface {
 
     func resetPagination() {
         currentPage = .zero
+        hasMorePages = true
     }
 }
