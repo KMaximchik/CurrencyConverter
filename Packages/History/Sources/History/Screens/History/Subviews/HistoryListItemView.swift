@@ -24,7 +24,7 @@ struct HistoryListItemView: View {
                 VStack(alignment: .leading, spacing: .zero) {
                     makeText(
                         titleKey: "History.list.item.initial.title",
-                        additionalText: "\(exchange.initialValue.toString() ?? "") \(exchange.fromCurrencyCode)",
+                        additionalText: "\(exchange.initialValueString ?? "") \(exchange.fromCurrencyCode)",
                         font: CCFont.subheadline
                     )
 
@@ -33,7 +33,7 @@ struct HistoryListItemView: View {
 
                     makeText(
                         titleKey: "History.list.item.result.title",
-                        additionalText: "\(exchange.value.toString() ?? "") \(exchange.toCurrencyCode)",
+                        additionalText: "\(exchange.valueString ?? "") \(exchange.toCurrencyCode)",
                         font: CCFont.subheadline
                     )
 
@@ -42,7 +42,7 @@ struct HistoryListItemView: View {
 
                     makeText(
                         titleKey: "History.list.item.rate.title",
-                        additionalText: "1 \(exchange.fromCurrencyCode) ≈ \(exchange.rateValue.toString() ?? "") \(exchange.toCurrencyCode)",
+                        additionalText: "1 \(exchange.fromCurrencyCode) ≈ \(exchange.rateValueString ?? "") \(exchange.toCurrencyCode)",
                         font: CCFont.footnote
                     )
                 }
@@ -81,6 +81,8 @@ struct HistoryListItemView: View {
                 .foregroundStyle(CCColor.separatorSecondary.color)
                 .font(font)
         }
+        .lineLimit(1)
+        .truncationMode(.tail)
     }
 
     @ViewBuilder

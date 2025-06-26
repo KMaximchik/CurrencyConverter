@@ -3,28 +3,28 @@ import Core
 import Utilities
 import DesignSystem
 
-// MARK: - HistoryViewController
+// MARK: - HistorySearchViewController
 
-final class HistoryViewController<ViewModel: HistoryViewModelInterface>: BaseViewController {
+final class HistorySearchViewController<ViewModel: HistorySearchViewModelInterface>: BaseViewController {
     // MARK: - Nested Types
 
     enum NavigationEvent {
-        case goSearch
+        case goBack
     }
 
     // MARK: - Private Properties
 
     private let viewModel: ViewModel
-    private let suiView: HistoryView<ViewModel>
-    private var hostingController: BaseHostingController<HistoryView<ViewModel>>
+    private let suiView: HistorySearchView<ViewModel>
+    private var hostingController: BaseHostingController<HistorySearchView<ViewModel>>
     private let onNavigate: ((NavigationEvent) -> Void)?
 
     // MARK: - Init
 
     init(
         viewModel: ViewModel,
-        suiView: HistoryView<ViewModel>,
-        hostingController: BaseHostingController<HistoryView<ViewModel>>,
+        suiView: HistorySearchView<ViewModel>,
+        hostingController: BaseHostingController<HistorySearchView<ViewModel>>,
         onNavigate: ((NavigationEvent) -> Void)? = nil
     ) {
         self.suiView = suiView
@@ -59,8 +59,8 @@ final class HistoryViewController<ViewModel: HistoryViewModelInterface>: BaseVie
         viewModel.outputPublisher
             .sink { [weak self] event in
                 switch event {
-                case .goSearch:
-                    self?.onNavigate?(.goSearch)
+                case .goBack:
+                    self?.onNavigate?(.goBack)
                 }
             }
             .store(in: &cancellables)

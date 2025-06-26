@@ -210,7 +210,29 @@
         }
       }
     },
-    "History.search.button.initial.caption" : {
+    "History.refresh.tip.title1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the "
+          }
+        }
+      }
+    },
+    "History.refresh.tip.title2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " button to refresh the history"
+          }
+        }
+      }
+    },
+    "HistorySearch.button.initial.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -221,7 +243,7 @@
         }
       }
     },
-    "History.search.button.result.caption" : {
+    "HistorySearch.button.result.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -232,7 +254,40 @@
         }
       }
     },
-    "History.search.tip.title" : {
+    "HistorySearch.empty.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make an exchange on the main screen so that it appears in the history"
+          }
+        }
+      }
+    },
+    "HistorySearch.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No saved data found..."
+          }
+        }
+      }
+    },
+    "HistorySearch.nav.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    },
+    "HistorySearch.tip.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

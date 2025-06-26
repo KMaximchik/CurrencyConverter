@@ -21,11 +21,10 @@ public struct CCScreenWrapper<Content: View>: View {
     // MARK: - Views
 
     public var body: some View {
-        ZStack(alignment: .top) {
-            content
-
-            additionalView
-        }
+        content
+            .overlay(alignment: .top) {
+                additionalView
+            }
     }
 
     @ViewBuilder
@@ -53,11 +52,7 @@ public struct CCScreenWrapper<Content: View>: View {
             CCBackdropBlurView(radius: 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            ProgressView()
-                .foregroundStyle(CCColor.labelSecondary.color)
-                .progressViewStyle(.circular)
-                .scaleEffect(1.3)
-
+            CCSpinner()
         }
         .ignoresSafeArea()
     }
@@ -77,6 +72,7 @@ public struct CCScreenWrapper<Content: View>: View {
             RoundedRectangle(cornerRadius: CCCornerRadius.sm)
                 .foregroundStyle(CCColor.accentRed.color)
         )
+        .padding(.top, CCSpacing.sm)
         .padding(.horizontal, CCSpacing.lg)
     }
 }

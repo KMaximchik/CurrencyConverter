@@ -37,5 +37,13 @@ public enum CCIcon {
         public static var xmarkIcon: CCIconToken {
             CCIconToken(name: "xmark", sourceType: sourceType)
         }
+
+        public static var arrowClockwiseIcon: CCIconToken {
+            CCIconToken(name: "arrow.clockwise", sourceType: sourceType)
+        }
+
+        public static var arrowUpIcon: CCIconToken {
+            CCIconToken(name: "arrow.up", sourceType: sourceType)
+        }
     }
 }

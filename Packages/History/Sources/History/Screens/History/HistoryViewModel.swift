@@ -8,13 +8,7 @@ import DesignSystem
 
 protocol HistoryViewModelInterface: ObservableObject {
     var exchanges: [Exchange] { get }
-    var filteredExchanges: [Exchange] { get }
     var screenState: CCScreenState { get }
-    var fromCurrencyCode: String? { get set }
-    var toCurrencyCode: String? { get set }
-    var availableFromCurrencies: [CurrencyCode] { get }
-    var availableToCurrencies: [CurrencyCode] { get }
-    var searchButtonEnabled: Bool { get }
 
     var outputPublisher: AnyPublisher<HistoryViewModelOutput, Never> { get }
     func handleInput(_ input: HistoryViewModelInput)
@@ -22,15 +16,17 @@ protocol HistoryViewModelInterface: ObservableObject {
 
 // MARK: - HistoryViewModelOutput
 
-enum HistoryViewModelOutput {}
+enum HistoryViewModelOutput {
+    case goSearch
+}
 
 // MARK: - HistoryViewModelInput
 
 enum HistoryViewModelInput {
     case onAppear
-    case onTapSwapButton
     case onTapSearchButton
-    case onTapResetButton
+    case onTapRefreshButton
+    case onAppearExchange(_ index: Int)
 }
 
 // MARK: - HistoryViewModel
@@ -39,66 +35,23 @@ final class HistoryViewModel {
     // MARK: - Internal Properties
 
     @Published var exchanges = [Exchange]()
-    @Published var filteredExchanges = [Exchange]()
     @Published var screenState = CCScreenState.pending
-    @Published var fromCurrencyCode: String?
-    @Published var toCurrencyCode: String?
-    @Published var availableFromCurrencies = CurrencyCode.allCases
-    @Published var availableToCurrencies = CurrencyCode.allCases
-    @Published var searchButtonEnabled = true
 
     // MARK: - Private Properties
 
-    private let historyUseCase: HistoryUseCaseInterface
-
     private let outputSubject = PassthroughSubject<HistoryViewModelOutput, Never>()
-    private var cancellables = Set<AnyCancellable>()
+
+    private let historyUseCase: HistoryUseCaseInterface
 
     // MARK: - Init
 
     init(historyUseCase: HistoryUseCaseInterface) {
         self.historyUseCase = historyUseCase
-
-        setupBindings()
     }
 
     // MARK: - Private Methods
 
-    private func setupBindings() {
-        $exchanges
-            .receive(on: RunLoop.main)
-            .map { value in
-                value
-            }
-            .assign(to: &$filteredExchanges)
-
-        $fromCurrencyCode
-            .receive(on: RunLoop.main)
-            .map { value in
-                guard let value else { return CurrencyCode.allCases }
-
-                return CurrencyCode.allCases.filter { $0.rawValue != value }
-            }
-            .assign(to: &$availableToCurrencies)
-
-        $toCurrencyCode
-            .receive(on: RunLoop.main)
-            .map { value in
-                guard let value else { return CurrencyCode.allCases }
-
-                return CurrencyCode.allCases.filter { $0.rawValue != value }
-            }
-            .assign(to: &$availableFromCurrencies)
-
-        Publishers.CombineLatest($toCurrencyCode, $fromCurrencyCode)
-            .receive(on: RunLoop.main)
-            .map { toCurrencyCode, fromCurrencyCode in
-                toCurrencyCode != nil && fromCurrencyCode != nil
-            }
-            .assign(to: &$searchButtonEnabled)
-    }
-
-    private func fetchHistory() {
+    private func fetchHistory(isReloading: Bool = false) {
         Task {
             let loadingTask = scheduleState(state: .loading, after: 2)
 
@@ -107,8 +60,17 @@ final class HistoryViewModel {
                 loadingTask.cancel()
 
                 await MainActor.run {
-                    self.exchanges = exchanges
-                    screenState = .pending
+                    if isReloading {
+                        self.exchanges.removeAll()
+                    }
+
+                    if !exchanges.isEmpty {
+                        self.exchanges.append(contentsOf: exchanges)
+                    }
+
+                    if screenState != .pending {
+                        screenState = .pending
+                    }
                 }
 
             case let .failure(error):
@@ -120,32 +82,6 @@ final class HistoryViewModel {
                 }
             }
         }
-    }
-
-    private func swapSelectedCurrencies() {
-        let tempCurrencyCode = fromCurrencyCode
-        fromCurrencyCode = toCurrencyCode
-        toCurrencyCode = tempCurrencyCode
-    }
-
-    private func searchExchanges() {
-        guard let fromCurrencyCode, let toCurrencyCode else {
-            filteredExchanges = exchanges
-
-            return
-        }
-
-        filteredExchanges = historyUseCase.searchExchanges(
-            from: exchanges,
-            fromCurrencyCode: fromCurrencyCode,
-            toCurrencyCode: toCurrencyCode
-        )
-    }
-
-    private func resetExchanges() {
-        fromCurrencyCode = nil
-        toCurrencyCode = nil
-        filteredExchanges = exchanges
     }
 
     @discardableResult
@@ -169,18 +105,19 @@ extension HistoryViewModel: HistoryViewModelInterface {
     func handleInput(_ input: HistoryViewModelInput) {
         switch input {
         case .onAppear:
-            guard fromCurrencyCode == nil, toCurrencyCode == nil else { return }
-            
             fetchHistory()
 
-        case .onTapSwapButton:
-            swapSelectedCurrencies()
-
         case .onTapSearchButton:
-            searchExchanges()
+            outputSubject.send(.goSearch)
 
-        case .onTapResetButton:
-            resetExchanges()
+        case .onTapRefreshButton:
+            historyUseCase.resetPagination()
+            fetchHistory(isReloading: true)
+
+        case let .onAppearExchange(index):
+            guard index == exchanges.indices.last else { return }
+
+            fetchHistory()
         }
     }
 }

@@ -59,7 +59,12 @@ extension RatesDBService: RatesDBServiceInterface {
         }
 
         do {
-            let existingRates = try await databaseClient.fetch(predicate: predicate, sortDescriptors: [])
+            let existingRates = try await databaseClient.fetch(
+                predicate: predicate,
+                sortDescriptors: [],
+                fetchOffset: nil,
+                fetchLimit: nil
+            )
 
             guard existingRates.isEmpty else {
                 try await updateRates(existingRates: existingRates, actualRates: rates)
@@ -81,7 +86,9 @@ extension RatesDBService: RatesDBServiceInterface {
         do {
             let rate: RateEntity? = try await databaseClient.fetch(
                 predicate: predicate,
-                sortDescriptors: []
+                sortDescriptors: [],
+                fetchOffset: nil,
+                fetchLimit: nil
             ).first
 
             guard let rate else { return nil }

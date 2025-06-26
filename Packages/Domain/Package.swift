@@ -13,9 +13,16 @@ let package = Package(
             targets: ["Domain"]
         ),
     ],
+    dependencies: [
+        .package(path: "../Utilities")
+    ],
     targets: [
         .target(
-            name: "Domain"
+            name: "Domain",
+            dependencies: [
+                .byName(name: "Utilities")
+            ],
+            path: "Sources"
         ),
     ]
 )

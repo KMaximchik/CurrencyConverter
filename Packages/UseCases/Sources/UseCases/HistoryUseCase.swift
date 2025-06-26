@@ -15,16 +15,19 @@ public protocol HistoryUseCaseInterface {
         rateValue: Decimal
     ) async -> Result<UUID, AppError>
     func searchExchanges(
-        from initialExchanges: [Exchange],
         fromCurrencyCode: String,
         toCurrencyCode: String
-    ) -> [Exchange]
+    ) async -> Result<[Exchange], AppError>
+    func resetPagination()
 }
 
 // MARK: - HistoryUseCase
 
 final class HistoryUseCase {
     // MARK: - Private Properties
+
+    private var currentPage = Int.zero
+    private let fetchLimit = 20
 
     private let exchangesDBService: ExchangesDBServiceInterface
 
@@ -42,7 +45,9 @@ final class HistoryUseCase {
 extension HistoryUseCase: HistoryUseCaseInterface {
     func fetchExchanges() async -> Result<[Exchange], AppError> {
         do {
-            let exchanges = try await exchangesDBService.fetchExchanges()
+            let exchanges = try await exchangesDBService.fetchExchanges(page: currentPage, fetchLimit: fetchLimit)
+
+            currentPage += 1
 
             return .success(exchanges)
         } catch {
@@ -78,12 +83,22 @@ extension HistoryUseCase: HistoryUseCaseInterface {
     }
 
     func searchExchanges(
-        from initialExchanges: [Exchange],
         fromCurrencyCode: String,
         toCurrencyCode: String
-    ) -> [Exchange] {
-        initialExchanges.filter {
-            $0.fromCurrencyCode == fromCurrencyCode && $0.toCurrencyCode == toCurrencyCode
+    ) async -> Result<[Exchange], AppError> {
+        do {
+            let exchanges = try await exchangesDBService.fetchExchanges(
+                by: fromCurrencyCode,
+                toCurrencyCode: toCurrencyCode
+            )
+
+            return .success(exchanges)
+        } catch {
+            return .failure(AppError(from: error))
         }
+    }
+
+    func resetPagination() {
+        currentPage = .zero
     }
 }

@@ -41,10 +41,25 @@ final class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
     private func setupUI() {
         view.backgroundColor = CCColor.backgroundPrimary.uiColor
+        //
+        //        tabBar.backgroundColor = CCColor.backgroundSecondary.uiColor
+        //        tabBar.tintColor = CCColor.accentBlue.uiColor
+        //        tabBar.unselectedItemTintColor = CCColor.labelSecondary.uiColor
+        //        tabBar.isTranslucent = false
 
-        tabBar.backgroundColor = CCColor.backgroundSecondary.uiColor
-        tabBar.tintColor = CCColor.accentBlue.uiColor
-        tabBar.unselectedItemTintColor = CCColor.labelSecondary.uiColor
-        tabBar.isTranslucent = false
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = CCColor.backgroundSecondary.uiColor
+        appearance.stackedLayoutAppearance.normal.iconColor = CCColor.labelSecondary.uiColor
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: CCColor.labelSecondary.uiColor
+        ]
+        appearance.stackedLayoutAppearance.selected.iconColor = CCColor.accentBlue.uiColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: CCColor.accentBlue.uiColor
+        ]
+
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
 }

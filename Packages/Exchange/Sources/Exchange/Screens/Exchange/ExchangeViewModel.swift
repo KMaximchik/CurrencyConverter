@@ -92,6 +92,20 @@ final class ExchangeViewModel {
             }
             .store(in: &cancellables)
 
+        $fromCurrencyCode
+            .compactMap { $0 }
+            .map { fromCurrencyCode in
+                CurrencyCode.allCases.filter { $0.rawValue != fromCurrencyCode }
+            }
+            .assign(to: &$availableToCurrencies)
+
+        $toCurrencyCode
+            .compactMap { $0 }
+            .map { toCurrencyCode in
+                CurrencyCode.allCases.filter { $0.rawValue != toCurrencyCode }
+            }
+            .assign(to: &$availableFromCurrencies)
+
         Publishers.CombineLatest($fromCurrencyCode.compactMap { $0 }, $toCurrencyCode.compactMap { $0 })
             .debounce(for: .seconds(1.5), scheduler: RunLoop.main)
             .removeDuplicates { previous, current in
@@ -99,9 +113,6 @@ final class ExchangeViewModel {
             }
             .receive(on: RunLoop.main)
             .sink { [weak self] fromCurrencyCode, toCurrencyCode in
-                self?.availableToCurrencies = CurrencyCode.allCases.filter { $0.rawValue != fromCurrencyCode }
-                self?.availableFromCurrencies = CurrencyCode.allCases.filter { $0.rawValue != toCurrencyCode }
-
                 self?.getActualRate(fromCurrencyCode: fromCurrencyCode, toCurrencyCode: toCurrencyCode)
                 self?.saveCurrencyPair(fromCurrencyCode: fromCurrencyCode, toCurrencyCode: toCurrencyCode)
             }

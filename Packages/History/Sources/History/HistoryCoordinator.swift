@@ -29,9 +29,33 @@ final class HistoryCoordinator: BaseCoordinator {
     // MARK: - Private Methods
 
     private func showHistory() {
-        guard let history = assembly?.makeHistory() else { return }
+        guard
+            let history = assembly?.makeHistory(
+                onNavigate: { [weak self] event in
+                    switch event {
+                    case .goSearch:
+                        self?.showHistorySearch()
+                    }
+                }
+            )
+        else { return }
 
         navigationController?.pushViewController(history, animated: true)
+    }
+
+    private func showHistorySearch() {
+        guard
+            let historySearch = assembly?.makeHistorySearch(
+                onNavigate: { [weak self] event in
+                    switch event {
+                    case .goBack:
+                        self?.navigationController?.dismiss(animated: true)
+                    }
+                }
+            )
+        else { return }
+
+        navigationController?.present(historySearch, animated: true)
     }
 }
 

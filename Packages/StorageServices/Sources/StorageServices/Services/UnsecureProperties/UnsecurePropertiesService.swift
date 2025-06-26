@@ -26,7 +26,7 @@ final class UnsecurePropertiesService {
 extension UnsecurePropertiesService: UnsecurePropertiesServiceInterface {
     subscript<Result: Codable>(key: UnsecureKeys) -> Result? {
         get {
-            var codableValue = userDefaults.value(forKey: key.rawValue) as? String
+            let codableValue = userDefaults.value(forKey: key.rawValue) as? String
 
             guard let value: Result = codableValue?.parse(to: Result.self) else {
                 return nil

@@ -5,7 +5,12 @@ import UseCases
 // MARK: - HistoryAssemblyInterface
 
 protocol HistoryAssemblyInterface: BaseAssemblyInterface {
-    func makeHistory() -> HistoryViewController<HistoryViewModel>
+    func makeHistory(
+        onNavigate: ((HistoryViewController<HistoryViewModel>.NavigationEvent) -> Void)?
+    ) -> HistoryViewController<HistoryViewModel>
+    func makeHistorySearch(
+        onNavigate: ((HistorySearchViewController<HistorySearchViewModel>.NavigationEvent) -> Void)?
+    ) -> HistorySearchViewController<HistorySearchViewModel>
 }
 
 // MARK: - HistoryAssembly
@@ -35,14 +40,33 @@ public final class HistoryAssembly: BaseAssembly {
 // MARK: - HistoryAssemblyInterface
 
 extension HistoryAssembly: HistoryAssemblyInterface {
-    func makeHistory() -> HistoryViewController<HistoryViewModel> {
+    func makeHistory(
+        onNavigate: ((HistoryViewController<HistoryViewModel>.NavigationEvent) -> Void)?
+    ) -> HistoryViewController<HistoryViewModel> {
         let viewModel = HistoryViewModel(historyUseCase: useCasesAssembly.historyUseCase)
         let suiView = HistoryView(viewModel: viewModel)
         let hostingController = BaseHostingController(rootView: suiView, ignoresKeyboard: true)
         let viewController = HistoryViewController(
             viewModel: viewModel,
             suiView: suiView,
-            hostingController: hostingController
+            hostingController: hostingController,
+            onNavigate: onNavigate
+        )
+
+        return viewController
+    }
+
+    func makeHistorySearch(
+        onNavigate: ((HistorySearchViewController<HistorySearchViewModel>.NavigationEvent) -> Void)?
+    ) -> HistorySearchViewController<HistorySearchViewModel> {
+        let viewModel = HistorySearchViewModel(historyUseCase: useCasesAssembly.historyUseCase)
+        let suiView = HistorySearchView(viewModel: viewModel)
+        let hostingController = BaseHostingController(rootView: suiView, ignoresKeyboard: true)
+        let viewController = HistorySearchViewController(
+            viewModel: viewModel,
+            suiView: suiView,
+            hostingController: hostingController,
+            onNavigate: onNavigate
         )
 
         return viewController

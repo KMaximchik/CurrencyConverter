@@ -11,9 +11,9 @@ public extension ExchangeEntity {
             id: exchange.id,
             fromCurrencyCode: exchange.fromCurrencyCode,
             toCurrencyCode: exchange.toCurrencyCode,
-            value: exchange.value.toString() ?? "",
-            initialValue: exchange.initialValue.toString() ?? "",
-            rateValue: exchange.rateValue.toString() ?? "",
+            value: exchange.valueString ?? "",
+            initialValue: exchange.initialValueString ?? "",
+            rateValue: exchange.rateValueString ?? "",
             createdAt: exchange.createdAt
         )
     }

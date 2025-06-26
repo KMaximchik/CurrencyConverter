@@ -24,8 +24,8 @@ public struct CCNavigationBar<Left: View, Title: View, Right: View>: View {
     // MARK: - Views
 
     public var body: some View {
-        VStack {
-            ZStack {
+        VStack(spacing: .zero) {
+            ZStack(alignment: .center) {
                 HStack(spacing: CCSpacing.md) {
                     left()
                         .frame(maxHeight: 44)

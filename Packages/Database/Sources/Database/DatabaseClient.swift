@@ -10,7 +10,9 @@ public protocol DatabaseClientInterface {
     func deleteAll<T: PersistentModel>(of type: T.Type) async throws
     func fetch<T: PersistentModel>(
         predicate: Predicate<T>?,
-        sortDescriptors: [SortDescriptor<T>]
+        sortDescriptors: [SortDescriptor<T>],
+        fetchOffset: Int?,
+        fetchLimit: Int?
     ) async throws -> [T]
 }
 
@@ -95,13 +97,17 @@ extension DatabaseClient: DatabaseClientInterface {
     }
 
     public func fetch<T: PersistentModel>(
-        predicate: Predicate<T>? = nil,
-        sortDescriptors: [SortDescriptor<T>] = []
+        predicate: Predicate<T>?,
+        sortDescriptors: [SortDescriptor<T>],
+        fetchOffset: Int?,
+        fetchLimit: Int?
     ) async throws -> [T] {
         do {
             return try await performBackground { context in
                 var descriptor = FetchDescriptor<T>(sortBy: sortDescriptors)
                 descriptor.predicate = predicate
+                descriptor.fetchLimit = fetchLimit
+                descriptor.fetchOffset = fetchOffset
                 return try context.fetch(descriptor)
             }
         } catch {
