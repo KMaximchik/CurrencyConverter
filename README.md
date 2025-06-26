@@ -28,7 +28,7 @@ To setup the project, you need to run the `start.command` script in the root of 
 
 ### Main Screen
 
-![image](https://github.com/user-attachments/assets/db5c936c-aeaa-4fec-9f24-1eb14b3aec8d)
+<img src="https://github.com/user-attachments/assets/db5c936c-aeaa-4fec-9f24-1eb14b3aec8d" alt="" width="200"/>
 ![image](https://github.com/user-attachments/assets/ab3b9275-783e-432e-87cc-986a3391e685)
 
 
