@@ -22,6 +22,7 @@ To setup the project, you need to run the `start.command` script in the root of 
 - `async/await`
 - `SPM`
 - `SwiftData`
+- `MVVM+C`
 - `xcodegen`
 
 ## Overview
