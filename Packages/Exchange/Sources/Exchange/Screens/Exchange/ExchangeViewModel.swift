@@ -92,37 +92,18 @@ final class ExchangeViewModel {
             }
             .store(in: &cancellables)
 
-        $fromCurrencyCode
-            .compactMap { $0 }
-            .removeDuplicates()
-            .receive(on: RunLoop.main)
-            .sink { [weak self] value in
-                self?.availableToCurrencies = CurrencyCode.allCases.filter { $0.rawValue != value }
-
-                guard let toCurrencyCode = self?.toCurrencyCode else { return }
-
-                self?.getActualRate(
-                    fromCurrencyCode: value,
-                    toCurrencyCode: toCurrencyCode
-                )
-                self?.saveCurrencyPair(fromCurrencyCode: value, toCurrencyCode: toCurrencyCode)
+        Publishers.CombineLatest($fromCurrencyCode.compactMap { $0 }, $toCurrencyCode.compactMap { $0 })
+            .debounce(for: .seconds(1.5), scheduler: RunLoop.main)
+            .removeDuplicates { previous, current in
+                previous.0 == current.0 && previous.1 == current.1
             }
-            .store(in: &cancellables)
-
-        $toCurrencyCode
-            .compactMap { $0 }
-            .removeDuplicates()
             .receive(on: RunLoop.main)
-            .sink { [weak self] value in
-                self?.availableFromCurrencies = CurrencyCode.allCases.filter { $0.rawValue != value }
+            .sink { [weak self] fromCurrencyCode, toCurrencyCode in
+                self?.availableToCurrencies = CurrencyCode.allCases.filter { $0.rawValue != fromCurrencyCode }
+                self?.availableFromCurrencies = CurrencyCode.allCases.filter { $0.rawValue != toCurrencyCode }
 
-                guard let fromCurrencyCode = self?.fromCurrencyCode else { return }
-
-                self?.getActualRate(
-                    fromCurrencyCode: fromCurrencyCode,
-                    toCurrencyCode: value
-                )
-                self?.saveCurrencyPair(fromCurrencyCode: fromCurrencyCode, toCurrencyCode: value)
+                self?.getActualRate(fromCurrencyCode: fromCurrencyCode, toCurrencyCode: toCurrencyCode)
+                self?.saveCurrencyPair(fromCurrencyCode: fromCurrencyCode, toCurrencyCode: toCurrencyCode)
             }
             .store(in: &cancellables)
 
