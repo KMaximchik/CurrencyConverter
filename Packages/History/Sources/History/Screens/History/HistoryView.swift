@@ -112,7 +112,9 @@ struct HistoryView<ViewModel: HistoryViewModelInterface>: View {
                     .padding(.top, CCSpacing.sm)
                     .id("id:reloadTipView")
                     .readOffset(in: .named("id:historyScroll")) { offset in
-                        showScrollToTopButton = offset < -50
+                        withAnimation {
+                            showScrollToTopButton = offset < -50
+                        }
                     }
 
                 LazyVStack(spacing: .zero) {
@@ -129,31 +131,32 @@ struct HistoryView<ViewModel: HistoryViewModelInterface>: View {
             }
             .background(.clear)
             .scrollIndicators(.hidden)
-            .scrollBounceBehavior(.basedOnSize)
             .safeAreaInset(edge: .bottom) {
-                if showScrollToTopButton {
-                    HStack(spacing: .zero) {
-                        Spacer()
+                HStack(spacing: .zero) {
+                    Spacer()
 
-                        Button {
-                            withAnimation {
-                                proxy.scrollTo("id:reloadTipView", anchor: .top)
-                            }
-                        } label: {
-                            CCIcon.System.arrowUpIcon.image
-                                .font(CCFont.body)
-                                .foregroundStyle(CCColor.labelPrimaryInvariably.color)
-                                .frame(maxWidth: 40, maxHeight: 40)
-                                .background(
-                                    RoundedRectangle(cornerRadius: CCCornerRadius.sm)
-                                        .foregroundStyle(CCColor.accentBlue.color)
-                                )
+                    Button {
+                        withAnimation {
+                            proxy.scrollTo("id:reloadTipView", anchor: .top)
                         }
+                    } label: {
+                        CCIcon.System.arrowUpIcon.image
+                            .font(CCFont.body)
+                            .foregroundStyle(CCColor.labelPrimaryInvariably.color)
+                            .frame(maxWidth: 40, maxHeight: 40)
+                            .background(
+                                RoundedRectangle(cornerRadius: CCCornerRadius.sm)
+                                    .foregroundStyle(CCColor.accentBlue.color)
+                            )
                     }
-                    .padding(.bottom, CCSpacing.sm)
                 }
+                .padding(.bottom, CCSpacing.sm)
+                .opacity(showScrollToTopButton ? 1 : .zero)
             }
             .coordinateSpace(name: "id:historyScroll")
+            .refreshable {
+                viewModel.handleInput(.onTapRefreshButton)
+            }
             .onChange(of: shouldScrollToTop) { _, newValue in
                 guard newValue else {
                     return

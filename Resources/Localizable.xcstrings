@@ -227,7 +227,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : " button to refresh the history"
+            "value" : " button or drag the list down to refresh the history"
           }
         }
       }

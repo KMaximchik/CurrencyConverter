@@ -170,7 +170,9 @@ struct HistorySearchView<ViewModel: HistorySearchViewModelInterface>: View {
                         HistoryListItemView(exchange: exchange)
                             .if(index == .zero) {
                                 $0.readOffset(in: .named("id:historyScroll")) { offset in
-                                    showScrollToTopButton = offset < -50
+                                    withAnimation {
+                                        showScrollToTopButton = offset < -50
+                                    }
                                 }
                             }
                             .if(index == .zero) {
@@ -181,29 +183,27 @@ struct HistorySearchView<ViewModel: HistorySearchViewModelInterface>: View {
             }
             .background(.clear)
             .scrollIndicators(.hidden)
-            .scrollBounceBehavior(.basedOnSize)
             .safeAreaInset(edge: .bottom) {
-                if showScrollToTopButton {
-                    HStack(spacing: .zero) {
-                        Spacer()
+                HStack(spacing: .zero) {
+                    Spacer()
 
-                        Button {
-                            withAnimation {
-                                proxy.scrollTo("id:firstHistoryItem", anchor: .top)
-                            }
-                        } label: {
-                            CCIcon.System.arrowUpIcon.image
-                                .font(CCFont.body)
-                                .foregroundStyle(CCColor.labelPrimaryInvariably.color)
-                                .frame(maxWidth: 40, maxHeight: 40)
-                                .background(
-                                    RoundedRectangle(cornerRadius: CCCornerRadius.sm)
-                                        .foregroundStyle(CCColor.accentBlue.color)
-                                )
+                    Button {
+                        withAnimation {
+                            proxy.scrollTo("id:firstHistoryItem", anchor: .top)
                         }
+                    } label: {
+                        CCIcon.System.arrowUpIcon.image
+                            .font(CCFont.body)
+                            .foregroundStyle(CCColor.labelPrimaryInvariably.color)
+                            .frame(maxWidth: 40, maxHeight: 40)
+                            .background(
+                                RoundedRectangle(cornerRadius: CCCornerRadius.sm)
+                                    .foregroundStyle(CCColor.accentBlue.color)
+                            )
                     }
-                    .padding(.bottom, CCSpacing.sm)
                 }
+                .padding(.bottom, CCSpacing.sm)
+                .opacity(showScrollToTopButton ? 1 : .zero)
             }
             .coordinateSpace(name: "id:historyScroll")
         }
