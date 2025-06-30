@@ -18,13 +18,8 @@ protocol ExchangeViewModelInterface: ObservableObject {
     var availableToCurrencies: [CurrencyCode] { get }
     var defaultInputsValue: Decimal { get }
 
-    var outputPublisher: AnyPublisher<ExchangeViewModelOutput, Never> { get }
     func handleInput(_ input: ExchangeViewModelInput)
 }
-
-// MARK: - ExchangeViewModelOutput
-
-enum ExchangeViewModelOutput {}
 
 // MARK: - ExchangeViewModelInput
 
@@ -57,7 +52,6 @@ final class ExchangeViewModel {
     private let currenciesUseCase: CurrenciesUseCaseInterface
     private let historyUseCase: HistoryUseCaseInterface
 
-    private let outputSubject = PassthroughSubject<ExchangeViewModelOutput, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
@@ -169,8 +163,6 @@ final class ExchangeViewModel {
                 toCurrency: toCurrencyCode
             ) {
             case let .success(rate):
-                loadingTask.cancel()
-
                 await MainActor.run {
                     actualRate = rate
 
@@ -184,14 +176,14 @@ final class ExchangeViewModel {
                 }
 
             case let .failure(error):
-                loadingTask.cancel()
-
                 await MainActor.run {
                     caption = nil
                     screenState = .error(error.message)
                     scheduleState(state: .pending, after: 4)
                 }
             }
+
+            loadingTask.cancel()
         }
     }
 
@@ -275,10 +267,6 @@ final class ExchangeViewModel {
 // MARK: - ExchangeViewModelInterface
 
 extension ExchangeViewModel: ExchangeViewModelInterface {
-    var outputPublisher: AnyPublisher<ExchangeViewModelOutput, Never> {
-        outputSubject.eraseToAnyPublisher()
-    }
-
     func handleInput(_ input: ExchangeViewModelInput) {
         switch input {
         case .onAppear:

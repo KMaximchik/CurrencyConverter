@@ -1,96 +1,45 @@
-import Core
-import UIKit
-
-// MARK: - TabBarCoordinatorInterface
-
-protocol TabBarCoordinatorInterface: BaseCoordinatorInterface {}
+import DesignSystem
+import SwiftUI
+import UseCases
+import History
+import Exchange
 
 // MARK: - TabBarCoordinator
 
-final class TabBarCoordinator: BaseCoordinator {
+public struct TabBarCoordinator: View {
     // MARK: - Private Properties
 
-    private weak var assembly: TabBarAssemblyInterface?
+    @State private var selectedTab = TabBarItem.exchange
 
-    private var tabBarController: TabBarController?
+    private let useCasesAssembly: UseCasesAssemblyInterface
 
     // MARK: - Init
 
-    init(assembly: TabBarAssemblyInterface, navigationController: UINavigationController?) {
-        self.assembly = assembly
-
-        super.init(navigationController: navigationController)
+    public init(useCasesAssembly: UseCasesAssemblyInterface) {
+        self.useCasesAssembly = useCasesAssembly
     }
 
-    // MARK: - *BaseCoordinator
+    // MARK: - Views
 
-    override func start() {
-        showTabBar()
-    }
+    public var body: some View {
+        TabView(selection: $selectedTab) {
+            ForEach(TabBarItem.allCases) { item in
+                Group {
+                    switch item {
+                    case .exchange:
+                        ExchangeCoordinator(useCasesAssembly: useCasesAssembly)
 
-    // MARK: - Private Methods
+                    case .history:
+                        HistoryCoordinator(useCasesAssembly: useCasesAssembly)
+                    }
+                }
+                .tabItem {
+                    item.image
 
-    private func showTabBar() {
-        guard let tabBarController = assembly?.makeTabBar() else { return }
-
-        self.tabBarController = tabBarController
-
-        setupTabs()
-
-        navigationController?.viewControllers.removeAll()
-        navigationController?.pushViewController(tabBarController, animated: false)
-    }
-
-    private func setupTabs() {
-        let tabItems = TabBarItem.allCases
-
-        guard
-            let tabBarController,
-            tabItems != tabBarController.customTabs.compactMap({ $0.itemDescriptor as? TabBarItem }),
-            let exchangeController = setupExchangeAndReturn(),
-            let historyController = setupHistoryAndReturn()
-        else { return }
-
-        tabBarController.customTabs = tabItems.map {
-            switch $0 {
-            case .exchange:
-                exchangeController.tabBarItem = UITabBarItem(
-                    title: $0.displayTitle,
-                    image: $0.image,
-                    selectedImage: $0.selectedImage
-                )
-
-                return TabBarControllerItem(itemDescriptor: $0, controller: exchangeController)
-
-            case .history:
-                historyController.tabBarItem = UITabBarItem(
-                    title: $0.displayTitle,
-                    image: $0.image,
-                    selectedImage: $0.selectedImage
-                )
-                
-                return TabBarControllerItem(itemDescriptor: $0, controller: historyController)
+                    Text(item.displayTitle)
+                }
+                .tag(item)
             }
         }
     }
-
-    private func setupExchangeAndReturn() -> UIViewController? {
-        guard let coordinator = assembly?.makeExchangeAssembly().coordinator() else { return nil }
-        coordinator.start()
-        add(child: coordinator)
-
-        return coordinator.navigationController
-    }
-
-    private func setupHistoryAndReturn() -> UIViewController? {
-        guard let coordinator = assembly?.makeHistoryAssembly().coordinator() else { return nil }
-        coordinator.start()
-        add(child: coordinator)
-
-        return coordinator.navigationController
-    }
 }
-
-// MARK: - TabBarCoordinatorInterface
-
-extension TabBarCoordinator: TabBarCoordinatorInterface {}

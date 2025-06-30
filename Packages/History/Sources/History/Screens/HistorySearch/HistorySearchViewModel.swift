@@ -15,21 +15,12 @@ protocol HistorySearchViewModelInterface: ObservableObject {
     var availableFromCurrencies: [CurrencyCode] { get }
     var availableToCurrencies: [CurrencyCode] { get }
 
-    var outputPublisher: AnyPublisher<HistorySearchViewModelOutput, Never> { get }
     func handleInput(_ input: HistorySearchViewModelInput)
-}
-
-// MARK: - HistorySearchViewModelOutput
-
-enum HistorySearchViewModelOutput {
-    case goBack
 }
 
 // MARK: - HistorySearchViewModelInput
 
 enum HistorySearchViewModelInput {
-    case onAppear
-    case onTapBackButton
     case onTapSwapButton
     case onTapSearchButton
     case onTapResetButton
@@ -52,7 +43,6 @@ final class HistorySearchViewModel {
 
     private let historyUseCase: HistoryUseCaseInterface
 
-    private let outputSubject = PassthroughSubject<HistorySearchViewModelOutput, Never>()
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
@@ -145,18 +135,8 @@ final class HistorySearchViewModel {
 // MARK: - HistorySearchViewModelInterface
 
 extension HistorySearchViewModel: HistorySearchViewModelInterface {
-    var outputPublisher: AnyPublisher<HistorySearchViewModelOutput, Never> {
-        outputSubject.eraseToAnyPublisher()
-    }
-
     func handleInput(_ input: HistorySearchViewModelInput) {
         switch input {
-        case .onAppear:
-            break
-
-        case .onTapBackButton:
-            outputSubject.send(.goBack)
-
         case .onTapSwapButton:
             swapSelectedCurrencies()
 

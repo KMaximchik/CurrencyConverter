@@ -1,64 +1,47 @@
-import Core
-import UIKit
-
-// MARK: - HistoryCoordinatorInterface
-
-protocol HistoryCoordinatorInterface: BaseCoordinatorInterface {}
+import SwiftUI
+import FlowStacks
+import UseCases
 
 // MARK: - HistoryCoordinator
 
-final class HistoryCoordinator: BaseCoordinator {
+public struct HistoryCoordinator: View {
+    // MARK: - Nested Types
+    
+    enum Screen: Hashable {
+        case historySearch
+    }
+    
     // MARK: - Private Properties
+    
+    @State private var path = FlowPath()
 
-    private weak var assembly: HistoryAssemblyInterface?
-
+    private let useCasesAssembly: UseCasesAssemblyInterface
+    
     // MARK: - Init
-
-    init(assembly: HistoryAssemblyInterface, navigationController: UINavigationController?) {
-        self.assembly = assembly
-
-        super.init(navigationController: navigationController)
+    
+    public init(useCasesAssembly: UseCasesAssemblyInterface) {
+        self.useCasesAssembly = useCasesAssembly
     }
-
-    // MARK: - *BaseCoordinator
-
-    override func start() {
-        showHistory()
-    }
-
-    // MARK: - Private Methods
-
-    private func showHistory() {
-        guard
-            let history = assembly?.makeHistory(
-                onNavigate: { [weak self] event in
-                    switch event {
-                    case .goSearch:
-                        self?.showHistorySearch()
-                    }
-                }
+    
+    // MARK: - Views
+    
+    public var body: some View {
+        FlowStack($path, withNavigation: true) {
+            HistoryView(
+                viewModel: HistoryViewModel(
+                    historyUseCase: useCasesAssembly.historyUseCase
+                )
             )
-        else { return }
-
-        navigationController?.pushViewController(history, animated: true)
-    }
-
-    private func showHistorySearch() {
-        guard
-            let historySearch = assembly?.makeHistorySearch(
-                onNavigate: { [weak self] event in
-                    switch event {
-                    case .goBack:
-                        self?.navigationController?.dismiss(animated: true)
-                    }
+            .flowDestination(for: Screen.self) { screen in
+                switch screen {
+                case .historySearch:
+                    HistorySearchView(
+                        viewModel: HistorySearchViewModel(
+                            historyUseCase: useCasesAssembly.historyUseCase
+                        )
+                    )   
                 }
-            )
-        else { return }
-
-        navigationController?.present(historySearch, animated: true)
+            }
+        }
     }
 }
-
-// MARK: - HistoryCoordinatorInterface
-
-extension HistoryCoordinator: HistoryCoordinatorInterface {}

@@ -49,7 +49,8 @@ public struct CCScreenWrapper<Content: View>: View {
     @ViewBuilder
     private var loader: some View {
         ZStack {
-            CCBackdropBlurView(radius: 10)
+            Rectangle()
+                .fill(.ultraThinMaterial)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             CCSpinner()

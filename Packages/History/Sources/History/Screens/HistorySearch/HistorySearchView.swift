@@ -1,6 +1,7 @@
 import SwiftUI
 import DesignSystem
 import Utilities
+import FlowStacks
 
 // MARK: - HistorySearchView
 
@@ -9,12 +10,13 @@ struct HistorySearchView<ViewModel: HistorySearchViewModelInterface>: View {
 
     @State private var showScrollToTopButton = false
 
-    @ObservedObject private var viewModel: ViewModel
+    @StateObject private var viewModel: ViewModel
+    @EnvironmentObject private var navigator: FlowPathNavigator
 
     // MARK: - Init
 
     init(viewModel: ViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     // MARK: - Views
@@ -38,9 +40,6 @@ struct HistorySearchView<ViewModel: HistorySearchViewModelInterface>: View {
             .greedySize()
             .background(CCColor.backgroundPrimary.color)
         }
-        .onAppear {
-            viewModel.handleInput(.onAppear)
-        }
     }
 
     @ViewBuilder
@@ -53,7 +52,7 @@ struct HistorySearchView<ViewModel: HistorySearchViewModelInterface>: View {
             },
             right: {
                 Button {
-                    viewModel.handleInput(.onTapBackButton)
+                    navigator.goBack()
                 } label: {
                     CCIcon.System.xmarkIcon.image
                         .font(CCFont.body)

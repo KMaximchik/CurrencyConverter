@@ -3,6 +3,7 @@ import Combine
 import UseCases
 import Domain
 import DesignSystem
+import FlowStacks
 
 // MARK: - HistoryViewModelInterface
 
@@ -10,21 +11,13 @@ protocol HistoryViewModelInterface: ObservableObject {
     var exchanges: [Exchange] { get }
     var screenState: CCScreenState { get }
 
-    var outputPublisher: AnyPublisher<HistoryViewModelOutput, Never> { get }
     func handleInput(_ input: HistoryViewModelInput)
-}
-
-// MARK: - HistoryViewModelOutput
-
-enum HistoryViewModelOutput {
-    case goSearch
 }
 
 // MARK: - HistoryViewModelInput
 
 enum HistoryViewModelInput {
     case onAppear
-    case onTapSearchButton
     case onTapRefreshButton
     case onAppearExchange(_ index: Int)
 }
@@ -40,8 +33,6 @@ final class HistoryViewModel {
     // MARK: - Private Properties
 
     private var isLoadingExchanges = false
-    private var isViewLoaded = false
-    private let outputSubject = PassthroughSubject<HistoryViewModelOutput, Never>()
 
     private let historyUseCase: HistoryUseCaseInterface
 
@@ -61,13 +52,15 @@ final class HistoryViewModel {
 
             switch await historyUseCase.fetchExchanges() {
             case let .success(exchanges):
-                loadingTask.cancel()
-
                 await MainActor.run {
                     if isReloading {
                         self.exchanges = exchanges
                     } else if !exchanges.isEmpty {
-                        self.exchanges.append(contentsOf: exchanges)
+                        self.exchanges.append(
+                            contentsOf: exchanges.filter { exchange in
+                                !self.exchanges.contains(where: { $0.id == exchange.id })
+                            }
+                        )
                     }
 
                     if screenState != .pending {
@@ -76,14 +69,13 @@ final class HistoryViewModel {
                 }
 
             case let .failure(error):
-                loadingTask.cancel()
-
                 await MainActor.run {
                     screenState = .error(error.message)
                     scheduleState(state: .pending, after: 4)
                 }
             }
 
+            loadingTask.cancel()
             isLoadingExchanges = false
         }
     }
@@ -102,21 +94,13 @@ final class HistoryViewModel {
 // MARK: - HistoryViewModelInterface
 
 extension HistoryViewModel: HistoryViewModelInterface {
-    var outputPublisher: AnyPublisher<HistoryViewModelOutput, Never> {
-        outputSubject.eraseToAnyPublisher()
-    }
-
     func handleInput(_ input: HistoryViewModelInput) {
         switch input {
         case .onAppear:
-            guard !isViewLoaded || exchanges.isEmpty else { return }
+            guard exchanges.isEmpty else { return }
 
             historyUseCase.resetPagination()
             fetchHistory()
-            isViewLoaded = true
-
-        case .onTapSearchButton:
-            outputSubject.send(.goSearch)
 
         case .onTapRefreshButton:
             historyUseCase.resetPagination()

@@ -1,10 +1,10 @@
-import UIKit
+import SwiftUI
 import DesignSystem
 import Utilities
 
 // MARK: - TabBarItem
 
-enum TabBarItem: Int, CaseIterable, TabBarItemDescriptor {
+enum TabBarItem: Int, Identifiable, CaseIterable {
     case exchange, history
 
     var id: String {
@@ -21,27 +21,13 @@ enum TabBarItem: Int, CaseIterable, TabBarItemDescriptor {
         }
     }
 
-    var image: UIImage? {
+    var image: Image {
         switch self {
         case .exchange:
-            CCIcon.System.dollarIcon.uiImage
-                .withTintColor(CCColor.labelSecondary.uiColor, renderingMode: .alwaysOriginal)
+            CCIcon.System.dollarIcon.image
 
         case .history:
-            CCIcon.System.listIcon.uiImage
-                .withTintColor(CCColor.labelSecondary.uiColor, renderingMode: .alwaysOriginal)
-        }
-    }
-
-    var selectedImage: UIImage? {
-        switch self {
-        case .exchange:
-            CCIcon.System.dollarIcon.uiImage
-                .withTintColor(CCColor.accentBlue.uiColor, renderingMode: .alwaysOriginal)
-
-        case .history:
-            CCIcon.System.listIcon.uiImage
-                .withTintColor(CCColor.accentBlue.uiColor, renderingMode: .alwaysOriginal)
+            CCIcon.System.listIcon.image
         }
     }
 }

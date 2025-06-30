@@ -18,7 +18,8 @@ let package = Package(
         .package(path: "../Utilities"),
         .package(path: "../Core"),
         .package(path: "../UseCases"),
-        .package(path: "../Domain")
+        .package(path: "../Domain"),
+        .package(url: "https://github.com/johnpatrickmorgan/FlowStacks", from: "0.8.4")
     ],
     targets: [
         .target(
@@ -28,7 +29,8 @@ let package = Package(
                 .byName(name: "Utilities"),
                 .byName(name: "Core"),
                 .byName(name: "UseCases"),
-                .byName(name: "Domain")
+                .byName(name: "Domain"),
+                .product(name: "FlowStacks", package: "FlowStacks")
             ],
             path: "Sources"
         ),

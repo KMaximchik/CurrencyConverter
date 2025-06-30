@@ -1,5 +1,3 @@
-import UIKit
-
 // MARK: - CCIcon
 
 public enum CCIcon {

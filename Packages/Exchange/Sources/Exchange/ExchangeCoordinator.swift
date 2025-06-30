@@ -1,40 +1,36 @@
-import Core
-import UIKit
-
-// MARK: - ExchangeCoordinatorInterface
-
-protocol ExchangeCoordinatorInterface: BaseCoordinatorInterface {}
+import SwiftUI
+import FlowStacks
+import UseCases
 
 // MARK: - ExchangeCoordinator
 
-final class ExchangeCoordinator: BaseCoordinator {
+public struct ExchangeCoordinator: View {
+    // MARK: - Nested Types
+
+    enum Screen: Hashable {}
+
     // MARK: - Private Properties
 
-    private weak var assembly: ExchangeAssemblyInterface?
+    @State private var routes = Routes<Screen>()
+
+    private let useCasesAssembly: UseCasesAssemblyInterface
 
     // MARK: - Init
 
-    init(assembly: ExchangeAssemblyInterface, navigationController: UINavigationController?) {
-        self.assembly = assembly
-
-        super.init(navigationController: navigationController)
+    public init(useCasesAssembly: UseCasesAssemblyInterface) {
+        self.useCasesAssembly = useCasesAssembly
     }
 
-    // MARK: - *BaseCoordinator
+    // MARK: - Views
 
-    override func start() {
-        showExchange()
-    }
-
-    // MARK: - Private Methods
-
-    private func showExchange() {
-        guard let exchange = assembly?.makeExchange() else { return }
-
-        navigationController?.pushViewController(exchange, animated: true)
+    public var body: some View {
+        FlowStack($routes, withNavigation: true) {
+            ExchangeView(
+                viewModel: ExchangeViewModel(
+                    currenciesUseCase: useCasesAssembly.currenciesUseCase,
+                    historyUseCase: useCasesAssembly.historyUseCase
+                )
+            )
+        }
     }
 }
-
-// MARK: - ExchangeCoordinatorInterface
-
-extension ExchangeCoordinator: ExchangeCoordinatorInterface {}

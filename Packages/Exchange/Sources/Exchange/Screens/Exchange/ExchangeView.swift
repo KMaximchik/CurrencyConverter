@@ -10,12 +10,12 @@ struct ExchangeView<ViewModel: ExchangeViewModelInterface>: View {
     @FocusState private var fromInputFocused: Bool
     @FocusState private var toInputFocused: Bool
 
-    @ObservedObject private var viewModel: ViewModel
+    @StateObject private var viewModel: ViewModel
 
     // MARK: - Init
 
     init(viewModel: ViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     // MARK: - Views
