@@ -24,6 +24,7 @@ To setup the project, you need to run the `start.command` script in the root of 
 - `SwiftData`
 - `MVVM+C`
 - `xcodegen`
+- `FlowStacks`
 
 ## Overview
 
