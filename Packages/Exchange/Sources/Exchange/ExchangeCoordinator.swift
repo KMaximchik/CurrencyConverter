@@ -11,7 +11,7 @@ public struct ExchangeCoordinator: View {
 
     // MARK: - Private Properties
 
-    @State private var routes = Routes<Screen>()
+    @State private var path = FlowPath()
 
     private let useCasesAssembly: UseCasesAssemblyInterface
 
@@ -24,7 +24,7 @@ public struct ExchangeCoordinator: View {
     // MARK: - Views
 
     public var body: some View {
-        FlowStack($routes, withNavigation: true) {
+        FlowStack($path, withNavigation: true) {
             ExchangeView(
                 viewModel: ExchangeViewModel(
                     currenciesUseCase: useCasesAssembly.currenciesUseCase,
