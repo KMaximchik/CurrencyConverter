@@ -10,7 +10,7 @@ import DesignSystem
 struct CurrencyConverterApp: App {
     // MARK: - Private Properties
 
-    private let useCasesAssembly: UseCasesAssemblyInterface = UseCasesAssembly()
+    private let appAssembly: AppAssemblyInterface = AppAssembly()
 
     // MARK: - Init
 
@@ -22,7 +22,7 @@ struct CurrencyConverterApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TabBarCoordinator(useCasesAssembly: useCasesAssembly)
+            TabBarCoordinator(useCasesAssembly: appAssembly.useCasesAssembly)
         }
     }
 

@@ -41,12 +41,4 @@ public final class UseCasesAssembly: UseCasesAssemblyInterface {
         self.apiServicesAssembly = apiServicesAssembly
         self.storageServicesAssembly = storageServicesAssembly
     }
-
-    public convenience init() {
-        self.init(
-            dbServicesAssembly: DBServicesAssembly(),
-            apiServicesAssembly: APIServicesAssembly(),
-            storageServicesAssembly: StorageServicesAssembly()
-        )
-    }
 }

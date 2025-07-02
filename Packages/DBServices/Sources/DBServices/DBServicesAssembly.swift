@@ -24,10 +24,11 @@ public final class DBServicesAssembly: DBServicesAssemblyInterface {
 
     // MARK: - Private Properties
 
-    private lazy var container = try! ModelContainer(for: RateEntity.self, ExchangeEntity.self)
-    private lazy var databaseClient = DatabaseClient(container: container)
+    private let databaseClient: DatabaseClientInterface
 
     // MARK: - Init
 
-    public init() {}
+    public init(databaseClient: DatabaseClientInterface) {
+        self.databaseClient = databaseClient
+    }
 }

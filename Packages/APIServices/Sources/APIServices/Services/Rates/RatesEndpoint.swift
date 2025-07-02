@@ -26,12 +26,7 @@ enum RatesEndpoint: NetworkEndpoint {
     }
 
     var headers: [String: String]? {
-        switch self {
-        case .getRates:
-            return [
-                "apiKey": AppConfiguration.shared.apiKey
-            ]
-        }
+        nil
     }
 
     var parameters: [String: Any]? {

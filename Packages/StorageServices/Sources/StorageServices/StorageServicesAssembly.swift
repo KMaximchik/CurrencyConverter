@@ -17,9 +17,11 @@ public final class StorageServicesAssembly: StorageServicesAssemblyInterface {
 
     // MARK: - Private Properties
 
-    private let userDefaults = UserDefaults.standard
+    private let userDefaults: UserDefaults
 
     // MARK: - Init
 
-    public init() {}
+    public init(userDefaults: UserDefaults) {
+        self.userDefaults = userDefaults
+    }
 }

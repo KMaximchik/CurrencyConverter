@@ -11,11 +11,13 @@ public protocol NetworkClientInterface {
 public class NetworkClient {
     // MARK: - Private Properties
 
+    private let apiKey: String
     private let session: URLSession
 
     // MARK: - Init
 
-    public init(session: URLSession) {
+    public init(apiKey: String, session: URLSession) {
+        self.apiKey = apiKey
         self.session = session
     }
 
@@ -40,6 +42,7 @@ public class NetworkClient {
         request.httpMethod = endpoint.method.rawValue
 
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiKey, forHTTPHeaderField: "apiKey")
         endpoint.headers?.forEach { key, value in
             request.setValue(value, forHTTPHeaderField: key)
         }

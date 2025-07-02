@@ -18,9 +18,11 @@ public final class APIServicesAssembly: APIServicesAssemblyInterface {
 
     // MARK: - Private Properties
 
-    private let networkClient: NetworkClientInterface = NetworkClient(session: URLSession.shared)
+    private let networkClient: NetworkClientInterface
 
     // MARK: - Init
 
-    public init() {}
+    public init(networkClient: NetworkClientInterface) {
+        self.networkClient = networkClient
+    }
 }
