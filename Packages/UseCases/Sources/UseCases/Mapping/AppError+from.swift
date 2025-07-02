@@ -1,7 +1,7 @@
 import Core
 import Network
 import Database
-import Utilities
+import Models
 
 // MARK: - AppError+from
 

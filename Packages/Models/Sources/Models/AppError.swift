@@ -1,9 +1,27 @@
-import Core
+import Foundation
 
-// MARK: - AppError+message
+// MARK: - AppError
 
-public extension AppError {
-    var message: String {
+public enum AppError: Error {
+    case invalidURL
+    case invalidResponse
+    case noData
+    case decodingError
+    case transportError
+
+    case unauthorized
+    case notFound
+    case forbidden
+    case requestsLimit
+    case validationError
+
+    case localSaving
+    case localDeleting
+    case localFetching
+
+    case unknown
+
+    public var message: String {
         switch self {
         case .invalidURL,
              .invalidResponse,
