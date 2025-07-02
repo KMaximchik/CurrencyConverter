@@ -3,14 +3,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "Domain",
+    name: "Models",
     platforms: [
         .iOS(.v17)
     ],
     products: [
         .library(
-            name: "Domain",
-            targets: ["Domain"]
+            name: "Models",
+            targets: ["Models"]
         ),
     ],
     dependencies: [
@@ -18,7 +18,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Domain",
+            name: "Models",
             dependencies: [
                 .byName(name: "Utilities")
             ],

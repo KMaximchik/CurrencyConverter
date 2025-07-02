@@ -1,5 +1,5 @@
 import SwiftUI
-import Domain
+import Models
 import DesignSystem
 import Utilities
 

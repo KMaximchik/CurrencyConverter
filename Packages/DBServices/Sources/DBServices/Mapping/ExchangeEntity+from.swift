@@ -1,6 +1,6 @@
 import Foundation
 import Entities
-import Domain
+import Models
 import Utilities
 
 // MARK: - ExchangeEntity+from

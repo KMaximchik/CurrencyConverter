@@ -1,5 +1,5 @@
 import Foundation
-import Domain
+import Models
 import APIServices
 import DBServices
 import StorageServices

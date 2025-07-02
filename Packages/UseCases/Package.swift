@@ -21,7 +21,7 @@ let package = Package(
         .package(path: "../StorageServices"),
         .package(path: "../Entities"),
         .package(path: "../DTOs"),
-        .package(path: "../Domain")
+        .package(path: "../Models")
     ],
     targets: [
         .target(
@@ -34,7 +34,7 @@ let package = Package(
                 .byName(name: "StorageServices"),
                 .byName(name: "Entities"),
                 .byName(name: "DTOs"),
-                .byName(name: "Domain")
+                .byName(name: "Models")
             ],
             path: "Sources"
         ),

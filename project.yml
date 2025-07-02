@@ -46,7 +46,7 @@ targets:
       - package: TabBar
       - package: Exchange
       - package: History
-      - package: Domain
+      - package: Models
       - package: DBServices
       - package: APIServices
       - package: UseCases
@@ -71,8 +71,8 @@ packages:
     path: Packages/Exchange
   History:
     path: Packages/History
-  Domain:
-    path: Packages/Domain
+  Models:
+    path: Packages/Models
   DBServices:
     path: Packages/DBServices
   APIServices:

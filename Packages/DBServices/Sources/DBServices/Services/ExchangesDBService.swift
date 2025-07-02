@@ -1,7 +1,7 @@
 import Foundation
 import Entities
 import Database
-import Domain
+import Models
 
 // MARK: - ExchangesDBServiceInterface
 

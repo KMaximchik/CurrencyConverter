@@ -1,7 +1,7 @@
 import SwiftUI
 import Combine
 import UseCases
-import Domain
+import Models
 import DesignSystem
 import FlowStacks
 

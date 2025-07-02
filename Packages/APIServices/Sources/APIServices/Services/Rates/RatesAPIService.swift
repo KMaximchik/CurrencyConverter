@@ -1,6 +1,6 @@
 import Network
 import DTOs
-import Domain
+import Models
 
 // MARK: - RatesAPIServiceInterface
 

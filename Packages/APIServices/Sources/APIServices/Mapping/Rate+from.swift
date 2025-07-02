@@ -1,6 +1,6 @@
 import Foundation
 import DTOs
-import Domain
+import Models
 
 // MARK: - Rate+from
 

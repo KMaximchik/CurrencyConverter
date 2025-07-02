@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../Database"),
         .package(path: "../Entities"),
-        .package(path: "../Domain"),
+        .package(path: "../Models"),
         .package(path: "../Utilities"),
         .package(path: "../Core")
     ],
@@ -26,7 +26,7 @@ let package = Package(
             dependencies: [
                 .byName(name: "Database"),
                 .byName(name: "Entities"),
-                .byName(name: "Domain"),
+                .byName(name: "Models"),
                 .byName(name: "Utilities"),
                 .byName(name: "Core")
             ],
