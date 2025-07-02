@@ -13,9 +13,15 @@ let package = Package(
             targets: ["Utilities"]
         ),
     ],
+    dependencies: [
+        .package(path: "../Core")
+    ],
     targets: [
         .target(
-            name: "Utilities"
+            name: "Utilities",
+            dependencies: [
+                .byName(name: "Core")
+            ]
         ),
     ]
 )

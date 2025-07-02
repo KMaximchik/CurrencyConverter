@@ -3,14 +3,21 @@ import Foundation
 // MARK: - AppError
 
 public enum AppError: Error {
-    case network(message: String)
-    case database(message: String)
-    case unknown(message: String)
+    case invalidURL
+    case invalidResponse
+    case noData
+    case decodingError
+    case transportError
 
-    public var message: String {
-        switch self {
-        case let .network(message), let .database(message), let .unknown(message):
-            message
-        }
-    }
+    case unauthorized
+    case notFound
+    case forbidden
+    case requestsLimit
+    case validationError
+
+    case localSaving
+    case localDeleting
+    case localFetching
+
+    case unknown
 }

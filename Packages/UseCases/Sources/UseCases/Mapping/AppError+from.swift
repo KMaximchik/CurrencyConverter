@@ -17,29 +17,59 @@ public extension AppError {
             return
         }
 
-        self = .unknown(message: "Error.unknown.title".localized())
+        self = .unknown
     }
 
     init(from networkError: NetworkError) {
         switch networkError {
-        case .invalidURL, .invalidResponse, .transportError, .noData, .decodingError, .serverError, .unauthorized, .notFound, .forbidden, .validationError:
-            self = .network(message: "Error.unknown.title".localized())
+        case .invalidURL:
+            self = .invalidURL
 
-        case .requestsLimit:
-            self = .network(message: "Error.requests.limit.title".localized())
+        case .invalidResponse:
+            self = .invalidResponse
+
+        case .serverError(let statusCode):
+            switch statusCode {
+            case 401:
+                self = .unauthorized
+
+            case 403:
+                self = .forbidden
+
+            case 404:
+                self = .notFound
+
+            case 422:
+                self = .validationError
+
+            case 429:
+                self = .requestsLimit
+
+            default:
+                self = .unknown
+            }
+
+        case .noData:
+            self = .noData
+
+        case .decodingError:
+            self = .decodingError
+
+        case .transportError:
+            self = .transportError
         }
     }
 
     init(from databaseError: DatabaseError) {
         switch databaseError {
         case .savingError:
-            self = .database(message: "Error.database.saving.title".localized())
+            self = .localSaving
 
         case .fetchingError:
-            self = .database(message: "Error.database.fetching.title".localized())
+            self = .localFetching
 
         case .deletingError:
-            self = .database(message: "Error.database.deleting.title".localized())
+            self = .localDeleting
         }
     }
 }

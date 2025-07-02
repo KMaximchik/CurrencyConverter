@@ -53,31 +53,6 @@ public class NetworkClient {
 
         return request
     }
-
-    private func getProcessedError(from statusCode: Int, data: Data) -> NetworkError {
-        switch statusCode {
-        case 401:
-            return .unauthorized
-
-        case 403:
-            return .forbidden
-
-        case 404:
-            return .notFound
-
-        case 422:
-            return .validationError
-
-        case 429:
-            return .requestsLimit
-
-        default:
-            return NetworkError.serverError(
-                statusCode: statusCode,
-                apiError: try? JSONDecoder().decode(APIError.self, from: data)
-            )
-        }
-    }
 }
 
 // MARK: - NetworkClientInterface
@@ -106,7 +81,7 @@ extension NetworkClient: NetworkClientInterface {
         let statusCode = httpResponse.statusCode
 
         guard (200..<300).contains(statusCode) else {
-            throw getProcessedError(from: statusCode, data: data)
+            throw NetworkError.serverError(statusCode: statusCode)
         }
 
         guard !data.isEmpty else {
